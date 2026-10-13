@@ -24,17 +24,24 @@ class _GameScreenState extends State<GameScreen> {
         backgroundColor: Colors.green[900],
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.pop(context);
+          onPressed: () async {
+            await context.read<GameController>().forceSaveInProgress();
+            if (context.mounted) {
+              Navigator.pop(context);
+            }
           },
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.refresh),
-            onPressed: () {
-              context.read<GameController>().newGame();
-              _clearSelection();
+            icon: const Icon(Icons.flag),
+            onPressed: () async {
+              final confirmed = await _showForfeitDialog(context);
+              if (confirmed == true && context.mounted) {
+                await context.read<GameController>().forfeitGame();
+                Navigator.pop(context);
+              }
             },
+            tooltip: 'Forfeit',
           ),
         ],
       ),
@@ -254,5 +261,25 @@ class _GameScreenState extends State<GameScreen> {
       selectedPileIndex = null;
       selectedCardIndex = null;
     });
+  }
+
+  Future<bool?> _showForfeitDialog(BuildContext context) {
+    return showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Forfeit Game?'),
+        content: const Text('Are you sure you want to forfeit this game?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text('Forfeit'),
+          ),
+        ],
+      ),
+    );
   }
 }

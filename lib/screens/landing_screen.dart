@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import '../controllers/game_controller.dart';
 import 'game_screen.dart';
@@ -11,62 +12,117 @@ class LandingScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.green[700],
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Text(
-              'Autumn Leaves',
-              style: TextStyle(
-                fontSize: 48,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
+      body: Consumer<GameController>(
+        builder: (context, controller, child) {
+          if (!controller.isInitialized) {
+            return const Center(
+              child: CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
               ),
-            ),
-            const SizedBox(height: 16),
-            const Text(
-              'Solitaire',
-              style: TextStyle(
-                fontSize: 32,
-                color: Colors.white70,
-              ),
-            ),
-            const SizedBox(height: 64),
-            _buildButton(
-              context,
-              'New Game',
-              Icons.play_arrow,
-              () {
-                context.read<GameController>().newGame();
-                Navigator.push(
+            );
+          }
+
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Text(
+                  'Autumn Leaves',
+                  style: TextStyle(
+                    fontSize: 48,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                const Text(
+                  'Solitaire',
+                  style: TextStyle(
+                    fontSize: 32,
+                    color: Colors.white70,
+                  ),
+                ),
+                const SizedBox(height: 64),
+                if (controller.hasInProgressGame)
+                  _buildButton(
+                    context,
+                    'Resume Game',
+                    Icons.refresh,
+                    () async {
+                      await controller.loadInProgressGame();
+                      if (context.mounted) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => const GameScreen()),
+                        );
+                      }
+                    },
+                  ),
+                if (controller.hasInProgressGame) const SizedBox(height: 16),
+                _buildButton(
                   context,
-                  MaterialPageRoute(builder: (context) => const GameScreen()),
-                );
-              },
-            ),
-            const SizedBox(height: 16),
-            _buildButton(
-              context,
-              'Stats',
-              Icons.bar_chart,
-              () {
-                Navigator.push(
+                  'New Game',
+                  Icons.play_arrow,
+                  () async {
+                    if (controller.hasInProgressGame) {
+                      final confirmed = await _showNewGameDialog(context);
+                      if (confirmed != true || !context.mounted) return;
+                      await controller.forfeitGame();
+                    }
+                    await controller.newGame();
+                    if (context.mounted) {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const GameScreen()),
+                      );
+                    }
+                  },
+                ),
+                const SizedBox(height: 16),
+                _buildButton(
                   context,
-                  MaterialPageRoute(builder: (context) => const StatsScreen()),
-                );
-              },
+                  'Stats',
+                  Icons.bar_chart,
+                  () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const StatsScreen()),
+                    );
+                  },
+                ),
+                const SizedBox(height: 16),
+                _buildButton(
+                  context,
+                  'Exit',
+                  Icons.exit_to_app,
+                  () {
+                    SystemNavigator.pop();
+                  },
+                ),
+              ],
             ),
-            const SizedBox(height: 16),
-            _buildButton(
-              context,
-              'Exit',
-              Icons.exit_to_app,
-              () {
-                Navigator.pop(context);
-              },
-            ),
-          ],
-        ),
+          );
+        },
+      ),
+    );
+  }
+
+  Future<bool?> _showNewGameDialog(BuildContext context) {
+    return showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Forfeit Game?'),
+        content: const Text('You have an in-progress game. Starting a new game will forfeit it. Continue?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text('Forfeit & Start'),
+          ),
+        ],
       ),
     );
   }
@@ -78,7 +134,7 @@ class LandingScreen extends StatelessWidget {
     VoidCallback onPressed,
   ) {
     return SizedBox(
-      width: 200,
+      width: 220,
       height: 60,
       child: ElevatedButton(
         onPressed: onPressed,
@@ -98,7 +154,7 @@ class LandingScreen extends StatelessWidget {
             Text(
               label,
               style: const TextStyle(
-                fontSize: 20,
+                fontSize: 18,
                 fontWeight: FontWeight.bold,
               ),
             ),
