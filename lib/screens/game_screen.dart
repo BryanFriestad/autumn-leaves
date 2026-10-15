@@ -94,25 +94,34 @@ class _GameScreenState extends State<GameScreen> {
   }
 
   Widget _buildGameBoard(GameController controller) {
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      child: SizedBox(
-        height: 500,
-        child: Padding(
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final screenWidth = constraints.maxWidth;
+        final totalPadding = 16; // 8px horizontal padding on each side
+        final columnSpacing = 4; // 2px on each side of each column
+        final availableWidth = screenWidth - totalPadding - (columnSpacing * 12);
+        final columnWidth = (availableWidth / 6).clamp(40.0, 80.0);
+        final cardWidth = columnWidth - 4; // Account for 2px padding on each side
+        final cardHeight = cardWidth * 1.5;
+        final cardSpacing = cardHeight * 0.25;
+
+        return Padding(
           padding: const EdgeInsets.all(8),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: controller.state.piles.asMap().entries.map((entry) {
               final index = entry.key;
               final pile = entry.value;
-              return SizedBox(
-                width: 70,
+              return Expanded(
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 2),
                   child: GestureDetector(
                     onTap: () => _handlePileTap(controller, index),
                     child: PileWidget(
                       pile: pile,
+                      cardWidth: cardWidth,
+                      cardHeight: cardHeight,
+                      cardSpacing: cardSpacing,
                       selectedIndex: selectedPileIndex == index ? selectedCardIndex : null,
                       onCardTap: (cardIndex) => _handleCardTap(controller, index, cardIndex),
                     ),
@@ -121,14 +130,14 @@ class _GameScreenState extends State<GameScreen> {
               );
             }).toList(),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 
   Widget _buildBottomBar(GameController controller) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
       color: Colors.green[800],
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -144,13 +153,13 @@ class _GameScreenState extends State<GameScreen> {
               backgroundColor: Colors.white,
               foregroundColor: Colors.green[900],
               padding: const EdgeInsets.symmetric(
-                horizontal: 24,
-                vertical: 12,
+                horizontal: 20,
+                vertical: 10,
               ),
             ),
             child: const Text(
               'Deal Cards',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
             ),
           ),
         ],
