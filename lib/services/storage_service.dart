@@ -66,6 +66,19 @@ class StorageService {
     return decoded.map((r) => GameRecord.fromJson(r as Map<String, dynamic>)).toList();
   }
 
+  Future<void> deleteFromHistory(String gameId) async {
+    final prefs = await SharedPreferences.getInstance();
+    final historyJson = prefs.getString(_historyKey);
+    if (historyJson == null) return;
+
+    final List<dynamic> decoded = jsonDecode(historyJson);
+    final history = decoded.map((r) => GameRecord.fromJson(r as Map<String, dynamic>)).toList();
+    
+    history.removeWhere((record) => record.id == gameId);
+
+    await prefs.setString(_historyKey, jsonEncode(history.map((r) => r.toJson()).toList()));
+  }
+
   String encodeGameState(GameState state) {
     return jsonEncode({
       'piles': state.piles.map((p) => _encodePile(p)).toList(),
