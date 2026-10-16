@@ -25,7 +25,11 @@ class _GameScreenState extends State<GameScreen> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () async {
-            await context.read<GameController>().forceSaveInProgress();
+            final controller = context.read<GameController>();
+            // Don't save if game is already won (already saved to history)
+            if (!controller.state.isWon) {
+              await controller.forceSaveInProgress();
+            }
             if (context.mounted) {
               Navigator.pop(context);
             }
@@ -127,31 +131,31 @@ class _GameScreenState extends State<GameScreen> {
           child: SizedBox(
             height: 500,
             child: Padding(
-          padding: const EdgeInsets.all(8),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: controller.state.piles.asMap().entries.map((entry) {
-              final index = entry.key;
-              final pile = entry.value;
+              padding: const EdgeInsets.all(8),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: controller.state.piles.asMap().entries.map((entry) {
+                  final index = entry.key;
+                  final pile = entry.value;
                   return SizedBox(
                     width: columnWidth,
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 2),
-                  child: GestureDetector(
-                    onTap: () => _handlePileTap(controller, index),
-                    child: PileWidget(
-                      pile: pile,
-                      cardWidth: cardWidth,
-                      cardHeight: cardHeight,
-                      cardSpacing: cardSpacing,
-                      selectedIndex: selectedPileIndex == index ? selectedCardIndex : null,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 2),
+                      child: GestureDetector(
+                        onTap: () => _handlePileTap(controller, index),
+                        child: PileWidget(
+                          pile: pile,
+                          cardWidth: cardWidth,
+                          cardHeight: cardHeight,
+                          cardSpacing: cardSpacing,
+                          selectedIndex: selectedPileIndex == index ? selectedCardIndex : null,
                           dimmedCardIndices: dimmedCards[index],
-                      onCardTap: (cardIndex) => _handleCardTap(controller, index, cardIndex),
+                          onCardTap: (cardIndex) => _handleCardTap(controller, index, cardIndex),
+                        ),
+                      ),
                     ),
-                  ),
-                ),
-              );
-            }).toList(),
+                  );
+                }).toList(),
               ),
             ),
           ),
