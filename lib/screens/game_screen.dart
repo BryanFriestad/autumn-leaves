@@ -81,6 +81,14 @@ class _GameScreenState extends State<GameScreen> {
             ),
           ),
           Text(
+            'Score: ${controller.state.score}',
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          Text(
             'Stock: ${controller.state.stock.length}',
             style: const TextStyle(
               color: Colors.white,

@@ -159,4 +159,29 @@ class GameState {
 
     return this;
   }
+
+  int get score {
+    int score = 0;
+    for (final pile in piles) {
+      for (int i = 0; i < pile.cards.length; i++) {
+        final card = pile.cards[i];
+        if (!card.faceUp) continue;
+        
+        // Add a point for sequential cards above and below
+        if (i > 0) {
+          final previousCard = pile.cards[i - 1];
+          if (previousCard.faceUp && previousCard.suit == card.suit && previousCard.rank.index == card.rank.index + 1) {
+            score++;
+          }
+        }
+        if (i < pile.cards.length - 1) {
+          final nextCard = pile.cards[i + 1];
+          if (nextCard.faceUp && nextCard.suit == card.suit && nextCard.rank.index == card.rank.index - 1) {
+            score++;
+          }
+        }
+      }
+    }
+    return score;
+  }
 }
