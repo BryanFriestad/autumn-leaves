@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/pile.dart';
-import '../models/card.dart';
-import 'card_widget.dart';
+import 'card_widget.dart' as card_widget;
 
 class PileWidget extends StatelessWidget {
   final Pile pile;
@@ -10,6 +9,7 @@ class PileWidget extends StatelessWidget {
   final double cardSpacing;
   final int? selectedIndex;
   final Function(int)? onCardTap;
+  final Set<int>? dimmedCardIndices;
 
   const PileWidget({
     super.key,
@@ -19,6 +19,7 @@ class PileWidget extends StatelessWidget {
     this.cardSpacing = 20,
     this.selectedIndex,
     this.onCardTap,
+    this.dimmedCardIndices
   });
 
   @override
@@ -38,11 +39,12 @@ class PileWidget extends StatelessWidget {
 
           return Positioned(
             top: topOffset,
-            child: CardWidget(
+            child: card_widget.CardWidget(
               card: card,
               width: cardWidth,
               height: cardHeight,
               isSelected: selectedIndex == index,
+              isDimmed: dimmedCardIndices?.contains(index) ?? false,
               onTap: card.faceUp && onCardTap != null
                   ? () => onCardTap!(index)
                   : null,

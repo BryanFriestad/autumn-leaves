@@ -92,7 +92,7 @@ class GameRules {
     ).checkWinCondition();
   }
 
-  static List<Card> getMovableCards(Pile pile) {
+  static List<Card> getMovableCards(Pile pile, List<Pile> allPiles) {
     final movable = <Card>[];
     final faceUpCards = pile.faceUpCards;
 
@@ -111,6 +111,26 @@ class GameRules {
       }
     }
 
-    return movable;
+    // Filter out cards/runs that have no valid destination
+    final filteredMovable = <Card>[];
+    for (int i = 0; i < movable.length; i++) {
+      final cardsToCheck = movable.sublist(i);
+      if (_hasValidDestination(cardsToCheck, pile, allPiles)) {
+        filteredMovable.addAll(cardsToCheck);
+        break;
+      }
+    }
+
+    return filteredMovable;
+  }
+
+  static bool _hasValidDestination(List<Card> cards, Pile fromPile, List<Pile> allPiles) {
+    for (int i = 0; i < allPiles.length; i++) {
+      if (allPiles[i] == fromPile) continue;
+      if (canMoveCards(cards, allPiles[i])) {
+        return true;
+      }
+    }
+    return false;
   }
 }

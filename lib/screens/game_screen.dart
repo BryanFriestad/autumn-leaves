@@ -33,6 +33,13 @@ class _GameScreenState extends State<GameScreen> {
         ),
         actions: [
           IconButton(
+            icon: const Icon(Icons.lightbulb),
+            onPressed: () {
+              context.read<GameController>().toggleMoveHints();
+            },
+            tooltip: 'Toggle Hints',
+          ),
+          IconButton(
             icon: const Icon(Icons.flag),
             onPressed: () async {
               final confirmed = await _showForfeitDialog(context);
@@ -113,14 +120,21 @@ class _GameScreenState extends State<GameScreen> {
         final cardHeight = cardWidth * 1.5;
         final cardSpacing = cardHeight * 0.25;
 
-        return Padding(
+        final dimmedCards = _calculateDimmedCards(controller);
+
+        return SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: SizedBox(
+            height: 500,
+            child: Padding(
           padding: const EdgeInsets.all(8),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: controller.state.piles.asMap().entries.map((entry) {
               final index = entry.key;
               final pile = entry.value;
-              return Expanded(
+                  return SizedBox(
+                    width: columnWidth,
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 2),
                   child: GestureDetector(
@@ -131,16 +145,66 @@ class _GameScreenState extends State<GameScreen> {
                       cardHeight: cardHeight,
                       cardSpacing: cardSpacing,
                       selectedIndex: selectedPileIndex == index ? selectedCardIndex : null,
+                          dimmedCardIndices: dimmedCards[index],
                       onCardTap: (cardIndex) => _handleCardTap(controller, index, cardIndex),
                     ),
                   ),
                 ),
               );
             }).toList(),
+              ),
+            ),
           ),
         );
       },
     );
+  }
+
+  Map<int, Set<int>> _calculateDimmedCards(GameController controller) {
+    if (!controller.showMoveHints) {
+      return {};
+    }
+
+    final dimmedCards = <int, Set<int>>{};
+
+    if (selectedPileIndex == null || selectedCardIndex == null) {
+      // All cards are dimmed except movable cards
+      for (int i = 0; i < controller.state.piles.length; i++) {
+        dimmedCards[i] = {};
+        final pile = controller.state.piles[i];
+
+        for (int j = 0; j < pile.cards.length; j++) {
+          final card = pile.cards[j];
+          if (!card.faceUp) continue;
+
+          if (!controller.canMoveCard(i, j)) {
+            dimmedCards[i]!.add(j);
+          }
+        }
+      }
+    } else {
+      // All cards are dimmed except the selected run and the top run of valid destination piles
+      for (int i = 0; i < controller.state.piles.length; i++) {
+        dimmedCards[i] = {};
+        final pile = controller.state.piles[i];
+
+        for (int j = 0; j < pile.cards.length; j++) {
+          final card = pile.cards[j];
+          if (!card.faceUp) continue;
+
+          if (i == selectedPileIndex && GameRules.isValidRun(pile.cards.sublist(j))) {
+            continue;
+          } else if (controller.getValidDestinations(selectedPileIndex!, selectedCardIndex!).contains(i) && GameRules.isValidRun(pile.cards.sublist(j))) {
+            continue;
+          }
+          
+          // All other cards are dimmed
+          dimmedCards[i]!.add(j);
+        }
+      }
+    }
+
+    return dimmedCards;
   }
 
   Widget _buildBottomBar(GameController controller) {

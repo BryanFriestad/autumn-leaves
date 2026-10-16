@@ -6,6 +6,7 @@ class CardWidget extends StatelessWidget {
   final double width;
   final double height;
   final bool isSelected;
+  final bool isDimmed;
   final VoidCallback? onTap;
 
   const CardWidget({
@@ -14,18 +15,23 @@ class CardWidget extends StatelessWidget {
     this.width = 60,
     this.height = 90,
     this.isSelected = false,
+    this.isDimmed = false,
     this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
+    final cardColor = card.faceUp
+        ? (isDimmed ? Colors.grey[300] : Colors.white)
+        : Colors.blue[700];
+
     return GestureDetector(
       onTap: onTap,
       child: Container(
         width: width,
         height: height,
         decoration: BoxDecoration(
-          color: card.faceUp ? Colors.white : Colors.blue[700],
+          color: cardColor,
           borderRadius: BorderRadius.circular(8),
           border: Border.all(
             color: isSelected ? Colors.yellow : Colors.black,

@@ -13,6 +13,7 @@ class GameController extends ChangeNotifier {
   final StorageService _storage = StorageService();
   bool _hasInProgressGame = false;
   bool _isInitialized = false;
+  bool _showMoveHints = true;
 
   GameState get state => _state;
   bool get isOfflineMode => _isOfflineMode;
@@ -20,6 +21,7 @@ class GameController extends ChangeNotifier {
   List<GameMove> get moveLog => _moveLog;
   bool get hasInProgressGame => _hasInProgressGame;
   bool get isInitialized => _isInitialized;
+  bool get showMoveHints => _showMoveHints;
 
   GameController() {
     _initialize();
@@ -169,5 +171,32 @@ class GameController extends ChangeNotifier {
     } else {
       await completeGame();
     }
+  }
+
+  void toggleMoveHints() {
+    _showMoveHints = !_showMoveHints;
+    notifyListeners();
+  }
+
+  bool canMoveCard(int pileIndex, int cardIndex) {
+    return GameRules.getMovableCards(_state.piles[pileIndex], _state.piles).isNotEmpty &&
+           cardIndex >= _state.piles[pileIndex].cards.length - GameRules.getMovableCards(_state.piles[pileIndex], _state.piles).length;
+  }
+
+  List<int> getValidDestinations(int fromPileIndex, int cardIndex) {
+    final pile = _state.piles[fromPileIndex];
+    if (cardIndex >= pile.cards.length) return [];
+
+    final card = pile.cards[cardIndex];
+    if (!card.faceUp) return [];
+
+    final validDestinations = <int>[];
+    for (int i = 0; i < _state.piles.length; i++) {
+      if (i == fromPileIndex) continue;
+      if (GameRules.canMoveCard(card, _state.piles[i])) {
+        validDestinations.add(i);
+      }
+    }
+    return validDestinations;
   }
 }
