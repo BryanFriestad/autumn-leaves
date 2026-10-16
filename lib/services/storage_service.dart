@@ -95,7 +95,6 @@ class StorageService {
       stock: (data['stock'] as List)
           .map((c) => _decodeCard(c as Map<String, dynamic>))
           .toList(),
-      foundations: List.generate(4, (_) => Pile()),
       moves: data['moves'] as int,
     );
   }

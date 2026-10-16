@@ -92,67 +92,6 @@ class GameRules {
     ).checkWinCondition();
   }
 
-  static bool canAutoMoveToFoundation(Card card, GameState state) {
-    for (final foundation in state.foundations) {
-      if (foundation.isEmpty) {
-        return card.rank == Rank.king;
-      }
-
-      final topCard = foundation.topCard;
-      if (topCard != null &&
-          topCard.suit == card.suit &&
-          topCard.value == card.value + 1) {
-        return true;
-      }
-    }
-    return false;
-  }
-
-  static GameState autoMoveToFoundation(
-    GameState state,
-    int pileIndex,
-    int cardIndex,
-  ) {
-    final pile = state.piles[pileIndex];
-    if (cardIndex >= pile.cards.length) return state;
-
-    final card = pile.cards[cardIndex];
-    if (!card.faceUp) return state;
-
-    if (!canAutoMoveToFoundation(card, state)) return state;
-
-    final newPiles = List<Pile>.from(state.piles.map((p) => p.copyWith()));
-    final newFoundations = List<Pile>.from(state.foundations.map((f) => f.copyWith()));
-
-    for (int i = 0; i < newFoundations.length; i++) {
-      final foundation = newFoundations[i];
-      if (foundation.isEmpty && card.rank == Rank.king) {
-        foundation.addCard(card);
-        newPiles[pileIndex].cards.removeAt(cardIndex);
-        break;
-      } else {
-        final topCard = foundation.topCard;
-        if (topCard != null &&
-            topCard.suit == card.suit &&
-            topCard.value == card.value + 1) {
-          foundation.addCard(card);
-          newPiles[pileIndex].cards.removeAt(cardIndex);
-          break;
-        }
-      }
-    }
-
-    if (!newPiles[pileIndex].hasFaceUpCards()) {
-      newPiles[pileIndex].flipTopCard();
-    }
-
-    return state.copyWith(
-      piles: newPiles,
-      foundations: newFoundations,
-      moves: state.moves + 1,
-    ).checkWinCondition();
-  }
-
   static List<Card> getMovableCards(Pile pile) {
     final movable = <Card>[];
     final faceUpCards = pile.faceUpCards;

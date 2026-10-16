@@ -108,14 +108,6 @@ class GameController extends ChangeNotifier {
     }
   }
 
-  void autoMoveToFoundation(int pileIndex, int cardIndex) {
-    final newState = GameRules.autoMoveToFoundation(_state, pileIndex, cardIndex);
-    if (newState != _state) {
-      _state = newState;
-      notifyListeners();
-    }
-  }
-
   Future<void> forfeitGame() async {
     final finalState = _storage.encodeGameState(_state);
     final record = GameRecord(

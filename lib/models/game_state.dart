@@ -4,7 +4,6 @@ import 'pile.dart';
 class GameState {
   final List<Pile> piles;
   final List<Card> stock;
-  final List<Pile> foundations;
   final bool isWon;
   final bool isLost;
   final int moves;
@@ -12,7 +11,6 @@ class GameState {
   GameState({
     required this.piles,
     required this.stock,
-    required this.foundations,
     this.isWon = false,
     this.isLost = false,
     this.moves = 0,
@@ -47,7 +45,6 @@ class GameState {
     return GameState(
       piles: piles,
       stock: stock,
-      foundations: List.generate(4, (_) => Pile()),
     );
   }
 
@@ -72,7 +69,6 @@ class GameState {
     return GameState(
       piles: piles,
       stock: stock,
-      foundations: List.generate(4, (_) => Pile()),
     );
   }
 
@@ -89,7 +85,6 @@ class GameState {
   GameState copyWith({
     List<Pile>? piles,
     List<Card>? stock,
-    List<Pile>? foundations,
     bool? isWon,
     bool? isLost,
     int? moves,
@@ -97,7 +92,6 @@ class GameState {
     return GameState(
       piles: piles ?? List.from(this.piles.map((p) => p.copyWith())),
       stock: stock ?? List.from(this.stock),
-      foundations: foundations ?? List.from(this.foundations.map((f) => f.copyWith())),
       isWon: isWon ?? this.isWon,
       isLost: isLost ?? this.isLost,
       moves: moves ?? this.moves,
