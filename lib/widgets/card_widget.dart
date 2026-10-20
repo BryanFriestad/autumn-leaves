@@ -22,7 +22,7 @@ class CardWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cardColor = card.faceUp
-        ? (isDimmed ? Colors.grey[300] : Colors.white)
+        ? (isDimmed ? Colors.grey[400] : Colors.white)
         : Colors.blue[700];
 
     return GestureDetector(
