@@ -1,14 +1,14 @@
 import 'package:flutter/foundation.dart';
-import 'dart:math';
 import '../models/game_state.dart';
 import '../models/game_history.dart';
 import '../logic/game_rules.dart';
+import '../logic/deck_shuffle.dart';
 import '../services/storage_service.dart';
 
 class GameController extends ChangeNotifier {
-  GameState _state = GameState.initial();
+  late String _currentShuffleId;
+  late GameState _state;
   bool _isOfflineMode = true;
-  String _currentSeed = '';
   List<GameMove> _moveLog = [];
   final StorageService _storage = StorageService();
   bool _hasInProgressGame = false;
@@ -17,13 +17,15 @@ class GameController extends ChangeNotifier {
 
   GameState get state => _state;
   bool get isOfflineMode => _isOfflineMode;
-  String get currentSeed => _currentSeed;
+  String get currentShuffleId => _currentShuffleId;
   List<GameMove> get moveLog => _moveLog;
   bool get hasInProgressGame => _hasInProgressGame;
   bool get isInitialized => _isInitialized;
   bool get showMoveHints => _showMoveHints;
 
   GameController() {
+    _currentShuffleId = getRandomShuffleId().toString();
+    _state = GameState.fromShuffleId(_currentShuffleId);
     _initialize();
   }
 
@@ -34,8 +36,8 @@ class GameController extends ChangeNotifier {
   }
 
   Future<void> newGame() async {
-    _currentSeed = _generateSeed();
-    _state = GameState.initial();
+    _currentShuffleId = getRandomShuffleId().toString();
+    _state = GameState.fromShuffleId(_currentShuffleId);
     _moveLog = [];
     await _storage.clearInProgressGame();
     _hasInProgressGame = false;
@@ -50,7 +52,7 @@ class GameController extends ChangeNotifier {
   Future<void> loadInProgressGame() async {
     final data = await _storage.loadInProgressGame();
     if (data != null) {
-      _currentSeed = data['seed'] as String;
+      _currentShuffleId = data['shuffleId'] as String;
       _state = _storage.decodeGameState(data['state'] as String);
       _moveLog = (data['moveLog'] as List)
           .map((m) => GameMove.fromJson(m as Map<String, dynamic>))
@@ -60,7 +62,7 @@ class GameController extends ChangeNotifier {
   }
 
   void testWinGame() {
-    _currentSeed = 'test';
+    _currentShuffleId = 'test';
     _state = GameState.testWin();
     _moveLog = [];
     notifyListeners();
@@ -110,17 +112,16 @@ class GameController extends ChangeNotifier {
     }
   }
 
+  // TODO: this and complete game are too similar, refactor
   Future<void> forfeitGame() async {
-    final finalState = _storage.encodeGameState(_state);
     final record = GameRecord(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
-      seed: _currentSeed,
+      shuffleId: _currentShuffleId,
       startTime: DateTime.now(),
       endTime: DateTime.now(),
       status: GameStatus.forfeited,
       moves: _state.moves,
       moveLog: List.from(_moveLog),
-      finalState: finalState,
     );
     await _storage.saveToHistory(record);
     await _storage.clearInProgressGame();
@@ -129,16 +130,14 @@ class GameController extends ChangeNotifier {
   }
 
   Future<void> completeGame() async {
-    final finalState = _storage.encodeGameState(_state);
     final record = GameRecord(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
-      seed: _currentSeed,
+      shuffleId: _currentShuffleId,
       startTime: DateTime.now(),
       endTime: DateTime.now(),
       status: GameStatus.won,
       moves: _state.moves,
       moveLog: List.from(_moveLog),
-      finalState: finalState,
     );
     await _storage.saveToHistory(record);
     await _storage.clearInProgressGame();
@@ -155,18 +154,15 @@ class GameController extends ChangeNotifier {
   }
 
   void reset() {
-    _state = GameState.initial();
+    _currentShuffleId = getRandomShuffleId().toString();
+    _state = GameState.fromShuffleId(_currentShuffleId);
+    _moveLog = [];
     notifyListeners();
-  }
-
-  String _generateSeed() {
-    final random = Random();
-    return random.nextInt(1000000).toString();
   }
 
   Future<void> _saveInProgress() async {
     if (!_state.isWon) {
-      await _storage.saveInProgressGame(_state, _currentSeed, _moveLog);
+      await _storage.saveInProgressGame(_state, _moveLog, _currentShuffleId);
       _hasInProgressGame = true;
     } else {
       await completeGame();

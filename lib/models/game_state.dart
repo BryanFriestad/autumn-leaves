@@ -1,5 +1,6 @@
 import 'card.dart';
 import 'pile.dart';
+import '../logic/deck_shuffle.dart';
 
 class GameState {
   final List<Pile> piles;
@@ -17,8 +18,12 @@ class GameState {
   });
 
   factory GameState.initial() {
-    final deck = _createDeck();
-    deck.shuffle();
+    final shuffleId = getRandomShuffleId().toString();
+    return GameState.fromShuffleId(shuffleId);
+  }
+
+  factory GameState.fromShuffleId(String shuffleId) {
+    final deck = stringsToCards(getShuffleById(parseShuffleId(shuffleId)));
 
     final piles = List.generate(6, (_) => Pile());
     final stock = <Card>[];
@@ -70,16 +75,6 @@ class GameState {
       piles: piles,
       stock: stock,
     );
-  }
-
-  static List<Card> _createDeck() {
-    final deck = <Card>[];
-    for (final suit in Suit.values) {
-      for (final rank in Rank.values) {
-        deck.add(Card(suit: suit, rank: rank));
-      }
-    }
-    return deck;
   }
 
   GameState copyWith({

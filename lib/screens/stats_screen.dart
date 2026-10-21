@@ -365,8 +365,8 @@ class _StatsScreenState extends State<StatsScreen> {
     );
   }
 
-  Future<void> _deleteGame(String gameId) async {
-    await _storage.deleteFromHistory(gameId);
+  Future<void> _deleteGame(String id) async {
+    await _storage.deleteFromHistory(id);
     await _loadStats();
   }
 }

@@ -1,6 +1,7 @@
 import '../models/card.dart';
 import '../models/pile.dart';
 import '../models/game_state.dart';
+import '../models/game_history.dart';
 
 class GameRules {
   static bool canMoveCard(Card card, Pile targetPile) {
@@ -132,5 +133,19 @@ class GameRules {
       }
     }
     return false;
+  }
+
+  static GameState applyMoveLog(GameState initialState, List<GameMove> moveLog) {
+    var state = initialState;
+    for (final move in moveLog) {
+      if (move.type == 'deal') {
+        state = state.deal();
+      } else if (move.type == 'moveCard') {
+        state = moveCard(state, move.fromPileIndex, move.toPileIndex);
+      } else if (move.type == 'moveCards') {
+        state = moveCards(state, move.fromPileIndex, move.toPileIndex, move.cardCount);
+      }
+    }
+    return state;
   }
 }

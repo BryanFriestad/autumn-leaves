@@ -4,16 +4,16 @@ import '../models/game_state.dart';
 import '../models/game_history.dart';
 import '../models/card.dart';
 import '../models/pile.dart';
+import '../logic/game_rules.dart';
 
 class StorageService {
   static const String _inProgressKey = 'in_progress_game';
   static const String _historyKey = 'game_history';
 
-  Future<void> saveInProgressGame(GameState state, String seed, List<GameMove> moveLog) async {
+  Future<void> saveInProgressGame(GameState state, List<GameMove> moveLog, String shuffleId) async {
     final prefs = await SharedPreferences.getInstance();
     final data = {
-      'state': encodeGameState(state),
-      'seed': seed,
+      'shuffleId': shuffleId,
       'moveLog': moveLog.map((m) => m.toJson()).toList(),
       'timestamp': DateTime.now().toIso8601String(),
     };
@@ -24,7 +24,22 @@ class StorageService {
     final prefs = await SharedPreferences.getInstance();
     final data = prefs.getString(_inProgressKey);
     if (data == null) return null;
-    return jsonDecode(data) as Map<String, dynamic>;
+
+    final decoded = jsonDecode(data) as Map<String, dynamic>;
+    final shuffleId = decoded['shuffleId'] as String;
+    final moveLog = (decoded['moveLog'] as List)
+        .map((m) => GameMove.fromJson(m as Map<String, dynamic>))
+        .toList();
+
+    // Reconstruct the game state from shuffleId and moveLog
+    final initialState = GameState.fromShuffleId(shuffleId);
+    final state = GameRules.applyMoveLog(initialState, moveLog);
+
+    return {
+      'shuffleId': shuffleId,
+      'moveLog': moveLog,
+      'state': encodeGameState(state),
+    };
   }
 
   Future<void> clearInProgressGame() async {
@@ -66,15 +81,15 @@ class StorageService {
     return decoded.map((r) => GameRecord.fromJson(r as Map<String, dynamic>)).toList();
   }
 
-  Future<void> deleteFromHistory(String gameId) async {
+  Future<void> deleteFromHistory(String id) async {
     final prefs = await SharedPreferences.getInstance();
     final historyJson = prefs.getString(_historyKey);
     if (historyJson == null) return;
 
     final List<dynamic> decoded = jsonDecode(historyJson);
     final history = decoded.map((r) => GameRecord.fromJson(r as Map<String, dynamic>)).toList();
-    
-    history.removeWhere((record) => record.id == gameId);
+
+    history.removeWhere((record) => record.id == id);
 
     await prefs.setString(_historyKey, jsonEncode(history.map((r) => r.toJson()).toList()));
   }
