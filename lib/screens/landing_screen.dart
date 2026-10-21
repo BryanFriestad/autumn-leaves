@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../controllers/game_controller.dart';
 import 'game_screen.dart';
 import 'stats_screen.dart';
+import 'how_to_play_screen.dart';
 
 class LandingScreen extends StatelessWidget {
   const LandingScreen({super.key});
@@ -87,6 +88,18 @@ class LandingScreen extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(builder: (context) => const StatsScreen()),
+                    );
+                  },
+                ),
+                const SizedBox(height: 16),
+                _buildButton(
+                  context,
+                  'How to Play',
+                  Icons.help_outline,
+                  () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const HowToPlayScreen()),
                     );
                   },
                 ),
