@@ -57,9 +57,7 @@ class GameController extends ChangeNotifier {
     if (data != null) {
       _currentShuffleId = data['shuffleId'] as String;
       _state = _storage.decodeGameState(data['state'] as String);
-      _moveLog = (data['moveLog'] as List)
-          .map((m) => GameMove.fromJson(m as Map<String, dynamic>))
-          .toList();
+      _moveLog = data['moveLog'] as List<GameMove>;
       _scorePenalty = data['scorePenalty'] as int? ?? 0;
       notifyListeners();
     }
