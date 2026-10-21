@@ -6,10 +6,14 @@ class HowToPlayScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.green[700],
+      backgroundColor: const Color(0xFF5D4037),
       appBar: AppBar(
-        title: const Text('How to Play'),
-        backgroundColor: Colors.green[900],
+        title: const Text(
+          'How to Play',
+          style: TextStyle(color: Color(0xFFFFB74D)),
+        ),
+        backgroundColor: const Color(0xFF3E2723),
+        iconTheme: const IconThemeData(color: Color(0xFFFFB74D)),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
@@ -64,7 +68,7 @@ class HowToPlayScreen extends StatelessWidget {
 
   Widget _buildRuleCard(String title, String content) {
     return Card(
-      color: Colors.white,
+      color: const Color(0xFFFFF8E1),
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -72,10 +76,10 @@ class HowToPlayScreen extends StatelessWidget {
           children: [
             Text(
               title,
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
-                color: Colors.green[900],
+                color: Color(0xFFE65100),
               ),
             ),
             const SizedBox(height: 12),
@@ -84,6 +88,7 @@ class HowToPlayScreen extends StatelessWidget {
               style: const TextStyle(
                 fontSize: 16,
                 height: 1.5,
+                color: Color(0xFF3E2723),
               ),
             ),
           ],

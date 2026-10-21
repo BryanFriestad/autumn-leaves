@@ -18,10 +18,14 @@ class _GameScreenState extends State<GameScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.green[700],
+      backgroundColor: const Color(0xFF5D4037),
       appBar: AppBar(
-        title: const Text('Autumn Leaves'),
-        backgroundColor: Colors.green[900],
+        title: const Text(
+          'Autumn Leaves',
+          style: TextStyle(color: Color(0xFFFFB74D)),
+        ),
+        backgroundColor: const Color(0xFF3E2723),
+        iconTheme: const IconThemeData(color: Color(0xFFFFB74D)),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () async {
@@ -38,6 +42,7 @@ class _GameScreenState extends State<GameScreen> {
         actions: [
           IconButton(
             icon: const Icon(Icons.lightbulb),
+            color: const Color(0xFFFFB74D),
             onPressed: () {
               context.read<GameController>().toggleMoveHints();
             },
@@ -45,6 +50,7 @@ class _GameScreenState extends State<GameScreen> {
           ),
           IconButton(
             icon: const Icon(Icons.flag),
+            color: const Color(0xFFFFB74D),
             onPressed: () async {
               final confirmed = await _showForfeitDialog(context);
               if (confirmed == true && context.mounted) {
@@ -79,7 +85,7 @@ class _GameScreenState extends State<GameScreen> {
   Widget _buildTopBar(GameController controller) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      color: Colors.green[800],
+      color: const Color(0xFF4E342E),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -122,7 +128,7 @@ class _GameScreenState extends State<GameScreen> {
         final columnWidth = (availableWidth / 6).clamp(40.0, 80.0);
         final cardWidth = columnWidth - 4; // Account for 2px padding on each side
         final cardHeight = cardWidth * 1.5;
-        final cardSpacing = cardHeight * 0.25;
+        final cardSpacing = cardHeight * 0.3;
 
         final dimmedCards = _calculateDimmedCards(controller);
 
@@ -214,7 +220,7 @@ class _GameScreenState extends State<GameScreen> {
   Widget _buildBottomBar(GameController controller) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-      color: Colors.green[800],
+      color: const Color(0xFF4E342E),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -226,8 +232,8 @@ class _GameScreenState extends State<GameScreen> {
                   }
                 : null,
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.white,
-              foregroundColor: Colors.green[900],
+              backgroundColor: const Color(0xFFFFB74D),
+              foregroundColor: const Color(0xFF3E2723),
               padding: const EdgeInsets.symmetric(
                 horizontal: 20,
                 vertical: 10,
@@ -246,8 +252,8 @@ class _GameScreenState extends State<GameScreen> {
                   }
                 : null,
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.white,
-              foregroundColor: Colors.green[900],
+              backgroundColor: const Color(0xFFFFB74D),
+              foregroundColor: const Color(0xFF3E2723),
               padding: const EdgeInsets.symmetric(
                 horizontal: 20,
                 vertical: 10,
@@ -268,8 +274,9 @@ class _GameScreenState extends State<GameScreen> {
       child: Container(
         padding: const EdgeInsets.all(32),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: const Color(0xFFFFF8E1),
           borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: const Color(0xFFFFB74D), width: 3),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -279,7 +286,7 @@ class _GameScreenState extends State<GameScreen> {
               style: TextStyle(
                 fontSize: 48,
                 fontWeight: FontWeight.bold,
-                color: Colors.green,
+                color: Color(0xFFE65100),
               ),
             ),
             const SizedBox(height: 16),
@@ -294,7 +301,7 @@ class _GameScreenState extends State<GameScreen> {
                 _clearSelection();
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.green[700],
+                backgroundColor: const Color(0xFFE65100),
                 foregroundColor: Colors.white,
                 padding: const EdgeInsets.symmetric(
                   horizontal: 32,
@@ -372,16 +379,29 @@ class _GameScreenState extends State<GameScreen> {
     return showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Forfeit Game?'),
-        content: const Text('Are you sure you want to forfeit this game?'),
+        backgroundColor: const Color(0xFFFFF8E1),
+        title: const Text(
+          'Forfeit Game?',
+          style: TextStyle(color: Color(0xFFE65100)),
+        ),
+        content: const Text(
+          'Are you sure you want to forfeit this game?',
+          style: TextStyle(color: Color(0xFF3E2723)),
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('Cancel'),
+            child: const Text(
+              'Cancel',
+              style: TextStyle(color: Color(0xFFE65100)),
+            ),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
-            child: const Text('Forfeit'),
+            child: const Text(
+              'Forfeit',
+              style: TextStyle(color: Color(0xFFE65100)),
+            ),
           ),
         ],
       ),

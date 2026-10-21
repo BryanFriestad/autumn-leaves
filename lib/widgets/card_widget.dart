@@ -22,8 +22,10 @@ class CardWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cardColor = card.faceUp
-        ? (isDimmed ? Colors.grey[400] : Colors.white)
-        : Colors.blue[700];
+        ? (isDimmed ? const Color(0xFFE0E0E0) : const Color(0xFFFFF8E1))
+        : const Color(0xFFE65100);
+
+    final hasGradient = card.faceUp && !isDimmed;
 
     return GestureDetector(
       onTap: onTap,
@@ -31,16 +33,23 @@ class CardWidget extends StatelessWidget {
         width: width,
         height: height,
         decoration: BoxDecoration(
-          color: cardColor,
+          color: hasGradient ? null : cardColor,
           borderRadius: BorderRadius.circular(8),
           border: Border.all(
-            color: isSelected ? Colors.yellow : Colors.black,
+            color: isSelected ? const Color(0xFFFF6F00) : const Color(0xFF8D6E63),
             width: isSelected ? 3 : 1,
           ),
+          gradient: hasGradient
+              ? const LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [Color(0xFFFFF8E1), Color(0xFFFFECB3)],
+                )
+              : null,
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.2),
-              blurRadius: 4,
+              color: Colors.black.withOpacity(0.3),
+              blurRadius: 6,
               offset: const Offset(2, 2),
             ),
           ],
@@ -53,7 +62,7 @@ class CardWidget extends StatelessWidget {
   }
 
   Widget _buildFaceUpCard() {
-    final textColor = card.isRed() ? Colors.red : Colors.black;
+    final textColor = card.isRed() ? const Color(0xFFBF360C) : const Color(0xFF3E2723);
 
     return Padding(
       padding: const EdgeInsets.all(2),
@@ -123,15 +132,30 @@ class CardWidget extends StatelessWidget {
   Widget _buildFaceDownCard() {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.blue[700],
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: Colors.blue[900]!, width: 2),
+        border: Border.all(color: const Color(0xFFBF360C), width: 2),
+        gradient: const LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [Color(0xFFFFB74D), Color(0xFFE65100)],
+        ),
       ),
       child: Center(
-        child: Icon(
-          Icons.pattern,
-          color: Colors.blue[400],
-          size: width * 0.4,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.eco,
+              color: const Color(0xFFFFF8E1),
+              size: width * 0.35,
+            ),
+            SizedBox(height: width * 0.05),
+            Icon(
+              Icons.eco,
+              color: const Color(0xFFFFF8E1).withOpacity(0.6),
+              size: width * 0.25,
+            ),
+          ],
         ),
       ),
     );

@@ -12,13 +12,13 @@ class LandingScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.green[700],
+      backgroundColor: const Color(0xFF5D4037),
       body: Consumer<GameController>(
         builder: (context, controller, child) {
           if (!controller.isInitialized) {
             return const Center(
               child: CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                valueColor: AlwaysStoppedAnimation<Color>(Color(0xFFFFB74D)),
               ),
             );
           }
@@ -32,7 +32,7 @@ class LandingScreen extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 48,
                     fontWeight: FontWeight.bold,
-                    color: Colors.white,
+                    color: Color(0xFFFFB74D),
                   ),
                 ),
                 const SizedBox(height: 16),
@@ -40,7 +40,7 @@ class LandingScreen extends StatelessWidget {
                   'Solitaire',
                   style: TextStyle(
                     fontSize: 32,
-                    color: Colors.white70,
+                    color: Color(0xFFFFCC80),
                   ),
                 ),
                 const SizedBox(height: 64),
@@ -124,16 +124,29 @@ class LandingScreen extends StatelessWidget {
     return showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Forfeit Game?'),
-        content: const Text('You have an in-progress game. Starting a new game will forfeit it. Continue?'),
+        backgroundColor: const Color(0xFFFFF8E1),
+        title: const Text(
+          'Forfeit Game?',
+          style: TextStyle(color: Color(0xFFE65100)),
+        ),
+        content: const Text(
+          'You have an in-progress game. Starting a new game will forfeit it. Continue?',
+          style: TextStyle(color: Color(0xFF3E2723)),
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('Cancel'),
+            child: const Text(
+              'Cancel',
+              style: TextStyle(color: Color(0xFFE65100)),
+            ),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
-            child: const Text('Forfeit & Start'),
+            child: const Text(
+              'Forfeit & Start',
+              style: TextStyle(color: Color(0xFFE65100)),
+            ),
           ),
         ],
       ),
@@ -152,8 +165,8 @@ class LandingScreen extends StatelessWidget {
       child: ElevatedButton(
         onPressed: onPressed,
         style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.white,
-          foregroundColor: Colors.green[900],
+          backgroundColor: const Color(0xFFFFB74D),
+          foregroundColor: const Color(0xFF3E2723),
           elevation: 4,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),

@@ -60,10 +60,14 @@ class PileWidget extends StatelessWidget {
       width: cardWidth,
       height: cardHeight,
       decoration: BoxDecoration(
-        color: Colors.green[800],
+        gradient: const LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [Color(0xFF5D4037), Color(0xFF3E2723)],
+        ),
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
-          color: Colors.green[900]!,
+          color: const Color(0xFF3E2723),
           width: 2,
         ),
       ),
