@@ -177,6 +177,6 @@ class GameState {
         }
       }
     }
-    return score;
+    return score * 100;
   }
 }

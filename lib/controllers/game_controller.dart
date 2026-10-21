@@ -14,6 +14,7 @@ class GameController extends ChangeNotifier {
   bool _hasInProgressGame = false;
   bool _isInitialized = false;
   bool _showMoveHints = true;
+  int _scorePenalty = 0;
 
   GameState get state => _state;
   bool get isOfflineMode => _isOfflineMode;
@@ -22,6 +23,7 @@ class GameController extends ChangeNotifier {
   bool get hasInProgressGame => _hasInProgressGame;
   bool get isInitialized => _isInitialized;
   bool get showMoveHints => _showMoveHints;
+  int get totalScore => _state.score - _scorePenalty;
 
   GameController() {
     _currentShuffleId = getRandomShuffleId().toString();
@@ -39,6 +41,7 @@ class GameController extends ChangeNotifier {
     _currentShuffleId = getRandomShuffleId().toString();
     _state = GameState.fromShuffleId(_currentShuffleId);
     _moveLog = [];
+    _scorePenalty = 0;
     await _storage.clearInProgressGame();
     _hasInProgressGame = false;
     notifyListeners();
@@ -57,6 +60,7 @@ class GameController extends ChangeNotifier {
       _moveLog = (data['moveLog'] as List)
           .map((m) => GameMove.fromJson(m as Map<String, dynamic>))
           .toList();
+      _scorePenalty = data['scorePenalty'] as int? ?? 0;
       notifyListeners();
     }
   }
@@ -122,6 +126,7 @@ class GameController extends ChangeNotifier {
       status: GameStatus.forfeited,
       moves: _state.moves,
       moveLog: List.from(_moveLog),
+      scorePenalty: _scorePenalty,
     );
     await _storage.saveToHistory(record);
     await _storage.clearInProgressGame();
@@ -138,6 +143,7 @@ class GameController extends ChangeNotifier {
       status: GameStatus.won,
       moves: _state.moves,
       moveLog: List.from(_moveLog),
+      scorePenalty: _scorePenalty,
     );
     await _storage.saveToHistory(record);
     await _storage.clearInProgressGame();
@@ -150,19 +156,30 @@ class GameController extends ChangeNotifier {
     notifyListeners();
   }
 
-  void undo() {
+  void undo() async {
+    if (_moveLog.isEmpty) return;
+
+    _moveLog.removeLast();
+    _scorePenalty += 25;
+
+    final initialState = GameState.fromShuffleId(_currentShuffleId);
+    _state = GameRules.applyMoveLog(initialState, _moveLog);
+
+    notifyListeners();
+    await _saveInProgress();
   }
 
   void reset() {
     _currentShuffleId = getRandomShuffleId().toString();
     _state = GameState.fromShuffleId(_currentShuffleId);
     _moveLog = [];
+    _scorePenalty = 0;
     notifyListeners();
   }
 
   Future<void> _saveInProgress() async {
     if (!_state.isWon) {
-      await _storage.saveInProgressGame(_state, _moveLog, _currentShuffleId);
+      await _storage.saveInProgressGame(_state, _moveLog, _currentShuffleId, scorePenalty: _scorePenalty);
       _hasInProgressGame = true;
     } else {
       await completeGame();

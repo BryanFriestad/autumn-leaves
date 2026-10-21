@@ -44,6 +44,7 @@ class GameRecord {
   final GameStatus status;
   final int moves;
   final List<GameMove> moveLog;
+  final int scorePenalty;
 
   GameRecord({
     required this.id,
@@ -53,6 +54,7 @@ class GameRecord {
     required this.status,
     required this.moves,
     required this.moveLog,
+    this.scorePenalty = 0,
   });
 
   Map<String, dynamic> toJson() {
@@ -64,6 +66,7 @@ class GameRecord {
       'stt': status.index,
       'm': moves,
       'ml': moveLog.map((m) => m.toJson()).toList(),
+      'sp': scorePenalty,
     };
   }
 
@@ -78,6 +81,7 @@ class GameRecord {
       moveLog: (json['ml'] as List)
           .map((m) => GameMove.fromJson(m as Map<String, dynamic>))
           .toList(),
+      scorePenalty: json['sp'] as int? ?? 0,
     );
   }
 }

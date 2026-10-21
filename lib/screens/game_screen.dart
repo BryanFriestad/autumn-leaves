@@ -92,7 +92,7 @@ class _GameScreenState extends State<GameScreen> {
             ),
           ),
           Text(
-            'Score: ${controller.state.score}',
+            'Score: ${controller.totalScore}',
             style: const TextStyle(
               color: Colors.white,
               fontSize: 16,
@@ -216,8 +216,28 @@ class _GameScreenState extends State<GameScreen> {
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
       color: Colors.green[800],
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
+          ElevatedButton(
+            onPressed: controller.moveLog.isNotEmpty
+                ? () {
+                    controller.undo();
+                    _clearSelection();
+                  }
+                : null,
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.white,
+              foregroundColor: Colors.green[900],
+              padding: const EdgeInsets.symmetric(
+                horizontal: 20,
+                vertical: 10,
+              ),
+            ),
+            child: const Text(
+              'Undo',
+              style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+            ),
+          ),
           ElevatedButton(
             onPressed: controller.state.canDeal()
                 ? () {

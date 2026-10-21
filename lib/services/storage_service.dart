@@ -10,12 +10,13 @@ class StorageService {
   static const String _inProgressKey = 'in_progress_game';
   static const String _historyKey = 'game_history';
 
-  Future<void> saveInProgressGame(GameState state, List<GameMove> moveLog, String shuffleId) async {
+  Future<void> saveInProgressGame(GameState state, List<GameMove> moveLog, String shuffleId, {int scorePenalty = 0}) async {
     final prefs = await SharedPreferences.getInstance();
     final data = {
       'shuffleId': shuffleId,
       'moveLog': moveLog.map((m) => m.toJson()).toList(),
       'timestamp': DateTime.now().toIso8601String(),
+      'scorePenalty': scorePenalty,
     };
     await prefs.setString(_inProgressKey, jsonEncode(data));
   }
@@ -30,6 +31,7 @@ class StorageService {
     final moveLog = (decoded['moveLog'] as List)
         .map((m) => GameMove.fromJson(m as Map<String, dynamic>))
         .toList();
+    final scorePenalty = decoded['scorePenalty'] as int? ?? 0;
 
     // Reconstruct the game state from shuffleId and moveLog
     final initialState = GameState.fromShuffleId(shuffleId);
@@ -39,6 +41,7 @@ class StorageService {
       'shuffleId': shuffleId,
       'moveLog': moveLog,
       'state': encodeGameState(state),
+      'scorePenalty': scorePenalty,
     };
   }
 
