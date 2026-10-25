@@ -57,7 +57,7 @@ class CardWidget extends StatelessWidget {
   }
 
   Widget _buildFaceUpCard() {
-    final textColor = card.isRed() ? AppColors.cardTextRed : AppColors.cardTextBlack;
+    final isRed = card.isRed();
 
     return Padding(
       padding: const EdgeInsets.all(2),
@@ -69,19 +69,12 @@ class CardWidget extends StatelessWidget {
             children: [
               Text(
                 card.rankSymbol,
-                style: TextStyle(
-                  color: textColor,
-                  fontSize: width * 0.2,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: AppTextStyles.cardRank(width, isRed: isRed),
               ),
               const SizedBox(width: 2),
               Text(
                 card.suitSymbol,
-                style: TextStyle(
-                  color: textColor,
-                  fontSize: width * 0.2,
-                ),
+                style: AppTextStyles.cardSuit(width, isRed: isRed),
               ),
             ],
           ),
@@ -89,10 +82,7 @@ class CardWidget extends StatelessWidget {
           Center(
             child: Text(
               card.suitSymbol,
-              style: TextStyle(
-                color: textColor,
-                fontSize: width * 0.4,
-              ),
+              style: AppTextStyles.cardCenterSuit(width, isRed: isRed),
             ),
           ),
           const Expanded(child: SizedBox()),
@@ -102,19 +92,12 @@ class CardWidget extends StatelessWidget {
               children: [
                 Text(
                   card.rankSymbol,
-                  style: TextStyle(
-                    color: textColor,
-                    fontSize: width * 0.2,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: AppTextStyles.cardRank(width, isRed: isRed),
                 ),
                 const SizedBox(width: 2),
                 Text(
                   card.suitSymbol,
-                  style: TextStyle(
-                    color: textColor,
-                    fontSize: width * 0.2,
-                  ),
+                  style: AppTextStyles.cardSuit(width, isRed: isRed),
                 ),
               ],
             ),
