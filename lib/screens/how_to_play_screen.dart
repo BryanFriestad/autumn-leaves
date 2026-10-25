@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../theme/app_theme.dart';
 
 class HowToPlayScreen extends StatelessWidget {
   const HowToPlayScreen({super.key});
@@ -6,14 +7,14 @@ class HowToPlayScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF5D4037),
+      backgroundColor: AppColors.scaffoldBackground,
       appBar: AppBar(
         title: const Text(
           'How to Play',
-          style: TextStyle(color: Color(0xFFFFB74D)),
+          style: AppTextStyles.appBarTitle,
         ),
-        backgroundColor: const Color(0xFF3E2723),
-        iconTheme: const IconThemeData(color: Color(0xFFFFB74D)),
+        backgroundColor: AppColors.appBarBackground,
+        iconTheme: AppIconThemes.appBar,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
@@ -68,7 +69,7 @@ class HowToPlayScreen extends StatelessWidget {
 
   Widget _buildRuleCard(String title, String content) {
     return Card(
-      color: const Color(0xFFFFF8E1),
+      color: AppColors.cardBackground,
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -76,20 +77,12 @@ class HowToPlayScreen extends StatelessWidget {
           children: [
             Text(
               title,
-              style: const TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: Color(0xFFE65100),
-              ),
+              style: AppTextStyles.ruleTitle,
             ),
             const SizedBox(height: 12),
             Text(
               content,
-              style: const TextStyle(
-                fontSize: 16,
-                height: 1.5,
-                color: Color(0xFF3E2723),
-              ),
+              style: AppTextStyles.ruleContent,
             ),
           ],
         ),

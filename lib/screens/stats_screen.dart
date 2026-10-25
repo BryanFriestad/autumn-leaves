@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/game_history.dart';
 import '../services/storage_service.dart';
+import '../theme/app_theme.dart';
 
 class StatsScreen extends StatefulWidget {
   const StatsScreen({super.key});
@@ -34,14 +35,14 @@ class _StatsScreenState extends State<StatsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF5D4037),
+      backgroundColor: AppColors.scaffoldBackground,
       appBar: AppBar(
         title: const Text(
           'Stats',
-          style: TextStyle(color: Color(0xFFFFB74D)),
+          style: AppTextStyles.appBarTitle,
         ),
-        backgroundColor: const Color(0xFF3E2723),
-        iconTheme: const IconThemeData(color: Color(0xFFFFB74D)),
+        backgroundColor: AppColors.appBarBackground,
+        iconTheme: AppIconThemes.appBar,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
@@ -51,7 +52,7 @@ class _StatsScreenState extends State<StatsScreen> {
         actions: [
           IconButton(
             icon: const Icon(Icons.delete),
-            color: const Color(0xFFFFB74D),
+            color: AppColors.iconAccent,
             onPressed: () async {
               final confirmed = await _showClearHistoryDialog();
               if (confirmed == true && mounted) {
@@ -65,7 +66,7 @@ class _StatsScreenState extends State<StatsScreen> {
       body: _isLoading
           ? const Center(
               child: CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(Color(0xFFFFB74D)),
+                valueColor: AlwaysStoppedAnimation<Color>(AppColors.progressIndicator),
               ),
             )
           : SingleChildScrollView(
@@ -93,7 +94,7 @@ class _StatsScreenState extends State<StatsScreen> {
     final winRate = totalGames > 0 ? (wins / totalGames * 100).toStringAsFixed(1) : '0.0';
 
     return Card(
-      color: const Color(0xFFFFF8E1),
+      color: AppColors.cardBackground,
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -101,11 +102,7 @@ class _StatsScreenState extends State<StatsScreen> {
           children: [
             Text(
               'Summary',
-              style: const TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: Color(0xFFE65100),
-              ),
+              style: AppTextStyles.sectionTitle,
             ),
             const SizedBox(height: 12),
             _buildStatRow('Total Games', totalGames.toString()),
@@ -134,7 +131,7 @@ class _StatsScreenState extends State<StatsScreen> {
         : null;
 
     return Card(
-      color: const Color(0xFFFFF8E1),
+      color: AppColors.cardBackground,
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -142,11 +139,7 @@ class _StatsScreenState extends State<StatsScreen> {
           children: [
             Text(
               'Performance',
-              style: const TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: Color(0xFFE65100),
-              ),
+              style: AppTextStyles.sectionTitle,
             ),
             const SizedBox(height: 12),
             _buildStatRow('Avg Moves (Wins)', avgWinMoves),
@@ -155,11 +148,7 @@ class _StatsScreenState extends State<StatsScreen> {
               const SizedBox(height: 8),
               Text(
                 'Best Game',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.green[900],
-                ),
+                style: AppTextStyles.bestGameLabel,
               ),
               _buildStatRow('Moves', _countNonDealMoves(bestGame).toString()),
               _buildStatRow('Date', _formatDate(bestGame.endTime)),
@@ -179,7 +168,7 @@ class _StatsScreenState extends State<StatsScreen> {
     final totalMoves = _history.fold<int>(0, (sum, r) => sum + r.moveLog.length);
 
     return Card(
-      color: const Color(0xFFFFF8E1),
+      color: AppColors.cardBackground,
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -187,11 +176,7 @@ class _StatsScreenState extends State<StatsScreen> {
           children: [
             Text(
               'Storage Info',
-              style: const TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: Color(0xFFE65100),
-              ),
+              style: AppTextStyles.sectionTitle,
             ),
             const SizedBox(height: 12),
             _buildStatRow('History Size', _formatBytes(totalSize)),
@@ -209,7 +194,7 @@ class _StatsScreenState extends State<StatsScreen> {
         : _history;
 
     return Card(
-      color: const Color(0xFFFFF8E1),
+      color: AppColors.cardBackground,
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -217,11 +202,7 @@ class _StatsScreenState extends State<StatsScreen> {
           children: [
             Text(
               'Recent Games',
-              style: const TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: Color(0xFFE65100),
-              ),
+              style: AppTextStyles.sectionTitle,
             ),
             const SizedBox(height: 12),
             if (recentGames.isEmpty)
@@ -235,7 +216,7 @@ class _StatsScreenState extends State<StatsScreen> {
   }
 
   Widget _buildGameItem(GameRecord game) {
-    final statusColor = game.status == GameStatus.won ? const Color(0xFF4CAF50) : const Color(0xFFFF9800);
+    final statusColor = game.status == GameStatus.won ? AppColors.winStatus : AppColors.forfeitStatus;
     final statusText = game.status == GameStatus.won ? 'Won' : 'Forfeited';
 
     return Padding(
@@ -257,23 +238,17 @@ class _StatsScreenState extends State<StatsScreen> {
               children: [
                 Text(
                   '$statusText - ${game.moves} moves',
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xFF3E2723),
-                  ),
+                  style: AppTextStyles.gameStatus,
                 ),
                 Text(
                   _formatDate(game.endTime),
-                  style: const TextStyle(
-                    fontSize: 12,
-                    color: Color(0xFF8D6E63),
-                  ),
+                  style: AppTextStyles.gameDate,
                 ),
               ],
             ),
           ),
           IconButton(
-            icon: const Icon(Icons.delete_outline, size: 20, color: Color(0xFFE65100)),
+            icon: const Icon(Icons.delete_outline, size: 20, color: AppColors.iconDelete),
             onPressed: () async {
               final confirmed = await _showDeleteGameDialog();
               if (confirmed == true && mounted) {
@@ -297,15 +272,11 @@ class _StatsScreenState extends State<StatsScreen> {
         children: [
           Text(
             label,
-            style: const TextStyle(fontSize: 16, color: Color(0xFF3E2723)),
+            style: AppTextStyles.statLabel,
           ),
           Text(
             value,
-            style: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-              color: Color(0xFFE65100),
-            ),
+            style: AppTextStyles.statValue,
           ),
         ],
       ),
@@ -335,28 +306,28 @@ class _StatsScreenState extends State<StatsScreen> {
     return showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: const Color(0xFFFFF8E1),
+        backgroundColor: AppColors.cardBackground,
         title: const Text(
           'Clear History?',
-          style: TextStyle(color: Color(0xFFE65100)),
+          style: AppTextStyles.dialogTitle,
         ),
         content: const Text(
           'This will permanently delete all game history. This action cannot be undone.',
-          style: TextStyle(color: Color(0xFF3E2723)),
+          style: AppTextStyles.dialogContent,
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
             child: const Text(
               'Cancel',
-              style: TextStyle(color: Color(0xFFE65100)),
+              style: AppTextStyles.dialogButton,
             ),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
             child: const Text(
               'Clear',
-              style: TextStyle(color: Color(0xFFE65100)),
+              style: AppTextStyles.dialogButton,
             ),
           ),
         ],
@@ -374,28 +345,28 @@ class _StatsScreenState extends State<StatsScreen> {
     return showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: const Color(0xFFFFF8E1),
+        backgroundColor: AppColors.cardBackground,
         title: const Text(
           'Delete Game?',
-          style: TextStyle(color: Color(0xFFE65100)),
+          style: AppTextStyles.dialogTitle,
         ),
         content: const Text(
           'This will permanently delete this game from history. This action cannot be undone.',
-          style: TextStyle(color: Color(0xFF3E2723)),
+          style: AppTextStyles.dialogContent,
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
             child: const Text(
               'Cancel',
-              style: TextStyle(color: Color(0xFFE65100)),
+              style: AppTextStyles.dialogButton,
             ),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
             child: const Text(
               'Delete',
-              style: TextStyle(color: Color(0xFFE65100)),
+              style: AppTextStyles.dialogButton,
             ),
           ),
         ],

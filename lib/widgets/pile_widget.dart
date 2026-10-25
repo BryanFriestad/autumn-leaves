@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../models/pile.dart';
 import 'card_widget.dart' as card_widget;
+import '../theme/app_theme.dart';
 
 class PileWidget extends StatelessWidget {
   final Pile pile;
@@ -60,14 +61,10 @@ class PileWidget extends StatelessWidget {
       width: cardWidth,
       height: cardHeight,
       decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [Color(0xFF5D4037), Color(0xFF3E2723)],
-        ),
+        gradient: AppColors.emptyPileGradient,
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
-          color: const Color(0xFF3E2723),
+          color: AppColors.emptyPileBorder,
           width: 2,
         ),
       ),

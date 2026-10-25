@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../controllers/game_controller.dart';
 import '../widgets/pile_widget.dart';
 import '../logic/game_rules.dart';
+import '../theme/app_theme.dart';
 
 class GameScreen extends StatefulWidget {
   const GameScreen({super.key});
@@ -18,14 +19,14 @@ class _GameScreenState extends State<GameScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF5D4037),
+      backgroundColor: AppColors.scaffoldBackground,
       appBar: AppBar(
         title: const Text(
           'Autumn Leaves',
-          style: TextStyle(color: Color(0xFFFFB74D)),
+          style: AppTextStyles.appBarTitle,
         ),
-        backgroundColor: const Color(0xFF3E2723),
-        iconTheme: const IconThemeData(color: Color(0xFFFFB74D)),
+        backgroundColor: AppColors.appBarBackground,
+        iconTheme: AppIconThemes.appBar,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () async {
@@ -42,7 +43,7 @@ class _GameScreenState extends State<GameScreen> {
         actions: [
           IconButton(
             icon: const Icon(Icons.lightbulb),
-            color: const Color(0xFFFFB74D),
+            color: AppColors.iconAccent,
             onPressed: () {
               context.read<GameController>().toggleMoveHints();
             },
@@ -50,7 +51,7 @@ class _GameScreenState extends State<GameScreen> {
           ),
           IconButton(
             icon: const Icon(Icons.flag),
-            color: const Color(0xFFFFB74D),
+            color: AppColors.iconAccent,
             onPressed: () async {
               final confirmed = await _showForfeitDialog(context);
               if (confirmed == true && context.mounted) {
@@ -85,33 +86,21 @@ class _GameScreenState extends State<GameScreen> {
   Widget _buildTopBar(GameController controller) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      color: const Color(0xFF4E342E),
+      color: AppColors.topBarBackground,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
             'Moves: ${controller.state.moves}',
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-            ),
+            style: AppTextStyles.topBarStats,
           ),
           Text(
             'Score: ${controller.totalScore}',
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-            ),
+            style: AppTextStyles.topBarStats,
           ),
           Text(
             'Stock: ${controller.state.stock.length}',
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-            ),
+            style: AppTextStyles.topBarStats,
           ),
         ],
       ),
@@ -220,7 +209,7 @@ class _GameScreenState extends State<GameScreen> {
   Widget _buildBottomBar(GameController controller) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-      color: const Color(0xFF4E342E),
+      color: AppColors.topBarBackground,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -232,8 +221,8 @@ class _GameScreenState extends State<GameScreen> {
                   }
                 : null,
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFFFFB74D),
-              foregroundColor: const Color(0xFF3E2723),
+              backgroundColor: AppColors.buttonBackground,
+              foregroundColor: AppColors.buttonForeground,
               padding: const EdgeInsets.symmetric(
                 horizontal: 20,
                 vertical: 10,
@@ -252,8 +241,8 @@ class _GameScreenState extends State<GameScreen> {
                   }
                 : null,
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFFFFB74D),
-              foregroundColor: const Color(0xFF3E2723),
+              backgroundColor: AppColors.buttonBackground,
+              foregroundColor: AppColors.buttonForeground,
               padding: const EdgeInsets.symmetric(
                 horizontal: 20,
                 vertical: 10,
@@ -274,9 +263,9 @@ class _GameScreenState extends State<GameScreen> {
       child: Container(
         padding: const EdgeInsets.all(32),
         decoration: BoxDecoration(
-          color: const Color(0xFFFFF8E1),
+          color: AppColors.cardBackground,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: const Color(0xFFFFB74D), width: 3),
+          border: Border.all(color: AppColors.iconAccent, width: 3),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -286,7 +275,7 @@ class _GameScreenState extends State<GameScreen> {
               style: TextStyle(
                 fontSize: 48,
                 fontWeight: FontWeight.bold,
-                color: Color(0xFFE65100),
+                color: AppColors.dialogTitle,
               ),
             ),
             const SizedBox(height: 16),
@@ -301,7 +290,7 @@ class _GameScreenState extends State<GameScreen> {
                 _clearSelection();
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFFE65100),
+                backgroundColor: AppColors.dialogTitle,
                 foregroundColor: Colors.white,
                 padding: const EdgeInsets.symmetric(
                   horizontal: 32,

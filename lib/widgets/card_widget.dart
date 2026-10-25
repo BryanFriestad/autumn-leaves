@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/card.dart' as game_models;
+import '../theme/app_theme.dart';
 
 class CardWidget extends StatelessWidget {
   final game_models.Card card;
@@ -22,8 +23,8 @@ class CardWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cardColor = card.faceUp
-        ? (isDimmed ? const Color(0xFFE0E0E0) : const Color(0xFFFFF8E1))
-        : const Color(0xFFE65100);
+        ? (isDimmed ? AppColors.cardBackgroundDimmed : AppColors.cardBackground)
+        : AppColors.cardBack;
 
     final hasGradient = card.faceUp && !isDimmed;
 
@@ -36,16 +37,10 @@ class CardWidget extends StatelessWidget {
           color: hasGradient ? null : cardColor,
           borderRadius: BorderRadius.circular(8),
           border: Border.all(
-            color: isSelected ? const Color(0xFFFF6F00) : const Color(0xFF8D6E63),
+            color: isSelected ? AppColors.cardBorderSelected : AppColors.cardBorder,
             width: isSelected ? 3 : 1,
           ),
-          gradient: hasGradient
-              ? const LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [Color(0xFFFFF8E1), Color(0xFFFFECB3)],
-                )
-              : null,
+          gradient: hasGradient ? AppColors.cardGradient : null,
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.3),
@@ -62,7 +57,7 @@ class CardWidget extends StatelessWidget {
   }
 
   Widget _buildFaceUpCard() {
-    final textColor = card.isRed() ? const Color(0xFFBF360C) : const Color(0xFF3E2723);
+    final textColor = card.isRed() ? AppColors.cardTextRed : AppColors.cardTextBlack;
 
     return Padding(
       padding: const EdgeInsets.all(2),
@@ -133,12 +128,8 @@ class CardWidget extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: const Color(0xFFBF360C), width: 2),
-        gradient: const LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [Color(0xFFFFB74D), Color(0xFFE65100)],
-        ),
+        border: Border.all(color: AppColors.cardBackBorder, width: 2),
+        gradient: AppColors.cardBackGradient,
       ),
       child: Center(
         child: Column(
@@ -146,13 +137,13 @@ class CardWidget extends StatelessWidget {
           children: [
             Icon(
               Icons.eco,
-              color: const Color(0xFFFFF8E1),
+              color: AppColors.cardBackIcon,
               size: width * 0.35,
             ),
             SizedBox(height: width * 0.05),
             Icon(
               Icons.eco,
-              color: const Color(0xFFFFF8E1).withOpacity(0.6),
+              color: AppColors.cardBackIcon.withOpacity(0.6),
               size: width * 0.25,
             ),
           ],

@@ -5,6 +5,7 @@ import '../controllers/game_controller.dart';
 import 'game_screen.dart';
 import 'stats_screen.dart';
 import 'how_to_play_screen.dart';
+import '../theme/app_theme.dart';
 
 class LandingScreen extends StatelessWidget {
   const LandingScreen({super.key});
@@ -12,13 +13,13 @@ class LandingScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF5D4037),
+      backgroundColor: AppColors.scaffoldBackground,
       body: Consumer<GameController>(
         builder: (context, controller, child) {
           if (!controller.isInitialized) {
             return const Center(
               child: CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(Color(0xFFFFB74D)),
+                valueColor: AlwaysStoppedAnimation<Color>(AppColors.progressIndicator),
               ),
             );
           }
@@ -29,19 +30,12 @@ class LandingScreen extends StatelessWidget {
               children: [
                 const Text(
                   'Autumn Leaves',
-                  style: TextStyle(
-                    fontSize: 48,
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xFFFFB74D),
-                  ),
+                  style: AppTextStyles.landingTitle,
                 ),
                 const SizedBox(height: 16),
                 const Text(
                   'Solitaire',
-                  style: TextStyle(
-                    fontSize: 32,
-                    color: Color(0xFFFFCC80),
-                  ),
+                  style: AppTextStyles.landingSubtitle,
                 ),
                 const SizedBox(height: 64),
                 if (controller.hasInProgressGame)
@@ -124,28 +118,28 @@ class LandingScreen extends StatelessWidget {
     return showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: const Color(0xFFFFF8E1),
+        backgroundColor: AppColors.cardBackground,
         title: const Text(
           'Forfeit Game?',
-          style: TextStyle(color: Color(0xFFE65100)),
+          style: AppTextStyles.dialogTitle,
         ),
         content: const Text(
           'You have an in-progress game. Starting a new game will forfeit it. Continue?',
-          style: TextStyle(color: Color(0xFF3E2723)),
+          style: AppTextStyles.dialogContent,
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
             child: const Text(
               'Cancel',
-              style: TextStyle(color: Color(0xFFE65100)),
+              style: AppTextStyles.dialogButton,
             ),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
             child: const Text(
               'Forfeit & Start',
-              style: TextStyle(color: Color(0xFFE65100)),
+              style: AppTextStyles.dialogButton,
             ),
           ),
         ],
@@ -165,8 +159,8 @@ class LandingScreen extends StatelessWidget {
       child: ElevatedButton(
         onPressed: onPressed,
         style: ElevatedButton.styleFrom(
-          backgroundColor: const Color(0xFFFFB74D),
-          foregroundColor: const Color(0xFF3E2723),
+          backgroundColor: AppColors.buttonBackground,
+          foregroundColor: AppColors.buttonForeground,
           elevation: 4,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
@@ -179,10 +173,7 @@ class LandingScreen extends StatelessWidget {
             const SizedBox(width: 12),
             Text(
               label,
-              style: const TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
+              style: AppTextStyles.buttonText,
             ),
           ],
         ),

@@ -18,7 +18,6 @@ class MyApp extends StatelessWidget {
         title: 'Autumn Leaves',
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),
           useMaterial3: true,
         ),
         home: const LandingScreen(),
