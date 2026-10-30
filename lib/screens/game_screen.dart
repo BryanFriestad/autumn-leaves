@@ -92,15 +92,15 @@ class _GameScreenState extends State<GameScreen> {
         children: [
           Text(
             'Moves: ${controller.state.moves}',
-            style: AppTextStyles.topBarStats,
+            style: AppTextStyles.topBarStats.copyWith(color: AppColors.white),
           ),
           Text(
             'Score: ${controller.totalScore}',
-            style: AppTextStyles.topBarStats,
+            style: AppTextStyles.topBarStats.copyWith(color: AppColors.yellow),
           ),
           Text(
             'Stock: ${controller.state.stock.length}',
-            style: AppTextStyles.topBarStats,
+            style: AppTextStyles.topBarStats.copyWith(color: AppColors.white),
           ),
         ],
       ),
