@@ -67,11 +67,6 @@ class StorageService {
 
     history.add(record);
 
-    // Keep only last 100 games to manage storage
-    if (history.length > 100) {
-      history = history.sublist(history.length - 100);
-    }
-
     await prefs.setString(_historyKey, jsonEncode(history.map((r) => r.toJson()).toList()));
   }
 
