@@ -29,7 +29,7 @@ class AppColors {
   // Background colors
   static const Color scaffoldBackground = _Palette.orange;
   static const Color appBarBackground = _Palette.orangeDark;
-  static const Color topBarBackground = _Palette.blue;
+  static const Color topBarBackground = _Palette.green;
   static const Color cardBackground = _Palette.white;
   static const Color cardBackgroundDimmed = _Palette.tan;
   static const Color cardBack = _Palette.red;
@@ -39,7 +39,7 @@ class AppColors {
   static const Color appBarTitle = _Palette.white;
   static const Color appBarIcon = _Palette.yellow;
   static const Color primaryText = _Palette.brown;
-  static const Color secondaryText = _Palette.blue;
+  static const Color secondaryText = _Palette.green;
   static const Color cardTextRed = _Palette.red;
   static const Color cardTextBlack = _Palette.brown;
   static const Color cardBackIcon = _Palette.yellow;
@@ -47,15 +47,15 @@ class AppColors {
   static const Color subtitleText = _Palette.yellow;
   static const Color buttonText = _Palette.brown;
   static const Color white = _Palette.white;
-  static const Color dialogTitle = _Palette.blue;
+  static const Color dialogTitle = _Palette.green;
   static const Color dialogContent = _Palette.brown;
-  static const Color dialogButton = _Palette.blue;
+  static const Color dialogButton = _Palette.green;
   static const Color cardLabel = _Palette.brown;
   static const Color cardValue = _Palette.green;
-  static const Color sectionTitle = _Palette.blue;
-  static const Color winStatus = _Palette.green;
+  static const Color sectionTitle = _Palette.green;
+  static const Color winStatus = _Palette.blue;
   static const Color forfeitStatus = _Palette.yellow;
-  static const Color ruleTitle = _Palette.blue;
+  static const Color ruleTitle = _Palette.green;
   static const Color ruleContent = _Palette.brown;
 
   // Border colors
@@ -65,22 +65,10 @@ class AppColors {
   static const Color emptyPileBorder = _Palette.orangeDark;
 
   // Gradient colors
-  static const LinearGradient cardGradient = LinearGradient(
-    begin: Alignment.topLeft,
-    end: Alignment.bottomRight,
-    colors: [_Palette.white, _Palette.tan],
-  );
-
   static const LinearGradient cardBackGradient = LinearGradient(
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
     colors: [_Palette.yellow, _Palette.red],
-  );
-
-  static const LinearGradient emptyPileGradient = LinearGradient(
-    begin: Alignment.topLeft,
-    end: Alignment.bottomRight,
-    colors: [_Palette.orange, _Palette.blue],
   );
 
   // Button colors
@@ -88,7 +76,7 @@ class AppColors {
   static const Color buttonForeground = _Palette.brown;
 
   // Icon colors
-  static const Color iconAccent = _Palette.blue;
+  static const Color iconAccent = _Palette.green;
   static const Color iconDelete = _Palette.red;
 
   // Progress indicator color
@@ -120,7 +108,7 @@ class AppTextStyles {
 
   static const TextStyle landingSubtitle = TextStyle(
     fontSize: 32,
-    color: _Palette.blue,
+    color: _Palette.green,
   );
 
   // Button text

@@ -26,21 +26,18 @@ class CardWidget extends StatelessWidget {
         ? (isDimmed ? AppColors.cardBackgroundDimmed : AppColors.cardBackground)
         : AppColors.cardBack;
 
-    final hasGradient = card.faceUp && !isDimmed;
-
     return GestureDetector(
       onTap: onTap,
       child: Container(
         width: width,
         height: height,
         decoration: BoxDecoration(
-          color: hasGradient ? null : cardColor,
+          color: cardColor,
           borderRadius: BorderRadius.circular(8),
           border: Border.all(
             color: isSelected ? AppColors.cardBorderSelected : AppColors.cardBorder,
             width: isSelected ? 3 : 1,
           ),
-          gradient: hasGradient ? AppColors.cardGradient : null,
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.3),

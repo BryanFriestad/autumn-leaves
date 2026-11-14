@@ -61,7 +61,7 @@ class PileWidget extends StatelessWidget {
       width: cardWidth,
       height: cardHeight,
       decoration: BoxDecoration(
-        gradient: AppColors.emptyPileGradient,
+        color: AppColors.emptyPileBackground,
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
           color: AppColors.emptyPileBorder,

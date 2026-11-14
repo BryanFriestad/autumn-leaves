@@ -16,6 +16,7 @@ class GameController extends ChangeNotifier {
   bool _showMoveHints = true;
   int _scorePenalty = 0;
   String? _lastCompletedGameId;
+  bool _isTestGame = false;
 
   GameState get state => _state;
   bool get isOfflineMode => _isOfflineMode;
@@ -44,6 +45,7 @@ class GameController extends ChangeNotifier {
     _moveLog = [];
     _scorePenalty = 0;
     _lastCompletedGameId = null;
+    _isTestGame = false;
     await _storage.clearInProgressGame();
     _hasInProgressGame = false;
     notifyListeners();
@@ -55,13 +57,19 @@ class GameController extends ChangeNotifier {
   }
 
   Future<void> loadInProgressGame() async {
-    final data = await _storage.loadInProgressGame();
-    if (data != null) {
+    try {
+      final data = await _storage.loadInProgressGame();
+      if (data == null) return;
       _currentShuffleId = data['shuffleId'] as String;
       _state = _storage.decodeGameState(data['state'] as String);
       _moveLog = data['moveLog'] as List<GameMove>;
       _scorePenalty = data['scorePenalty'] as int? ?? 0;
+      _isTestGame = false;
+      _lastCompletedGameId = null;
       notifyListeners();
+    } catch (_) {
+      await _storage.clearInProgressGame();
+      _hasInProgressGame = false;
     }
   }
 
@@ -71,6 +79,7 @@ class GameController extends ChangeNotifier {
     _moveLog = [];
     _scorePenalty = 0;
     _lastCompletedGameId = null;
+    _isTestGame = true;
     await _storage.clearInProgressGame();
     _hasInProgressGame = false;
     notifyListeners();
@@ -186,10 +195,12 @@ class GameController extends ChangeNotifier {
     _state = GameState.fromShuffleId(_currentShuffleId);
     _moveLog = [];
     _scorePenalty = 0;
+    _isTestGame = false;
     notifyListeners();
   }
 
   Future<void> _saveInProgress() async {
+    if (_isTestGame) return;
     if (!_state.isWon) {
       await _storage.saveInProgressGame(_state, _moveLog, _currentShuffleId, scorePenalty: _scorePenalty);
       _hasInProgressGame = true;
