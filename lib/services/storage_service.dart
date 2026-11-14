@@ -66,7 +66,26 @@ class StorageService {
     }
 
     history.add(record);
+    await _writeHistory(history);
+  }
 
+  Future<void> updateDealRating(String id, DealRating rating) async {
+    final prefs = await SharedPreferences.getInstance();
+    final historyJson = prefs.getString(_historyKey);
+    if (historyJson == null) return;
+
+    final List<dynamic> decoded = jsonDecode(historyJson);
+    final history = decoded.map((r) => GameRecord.fromJson(r as Map<String, dynamic>)).toList();
+
+    final index = history.indexWhere((record) => record.id == id);
+    if (index == -1) return;
+
+    history[index] = history[index].copyWith(dealRating: rating);
+    await _writeHistory(history);
+  }
+
+  Future<void> _writeHistory(List<GameRecord> history) async {
+    final prefs = await SharedPreferences.getInstance();
     await prefs.setString(_historyKey, jsonEncode(history.map((r) => r.toJson()).toList()));
   }
 

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../controllers/game_controller.dart';
+import '../models/game_history.dart';
 import '../widgets/pile_widget.dart';
 import '../logic/game_rules.dart';
 import '../theme/app_theme.dart';
@@ -15,6 +16,7 @@ class GameScreen extends StatefulWidget {
 class _GameScreenState extends State<GameScreen> {
   int? selectedPileIndex;
   int? selectedCardIndex;
+  DealRating? _dealRating;
 
   @override
   Widget build(BuildContext context) {
@@ -283,11 +285,49 @@ class _GameScreenState extends State<GameScreen> {
               'Moves: ${controller.state.moves}',
               style: const TextStyle(fontSize: 24),
             ),
-            const SizedBox(height: 32),
+            const SizedBox(height: 24),
+            const Text(
+              'Rate this deal',
+              style: TextStyle(fontSize: 18),
+            ),
+            const SizedBox(height: 8),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                IconButton(
+                  icon: Icon(
+                    Icons.thumb_up,
+                    color: _dealRating == DealRating.positive
+                        ? AppColors.iconAccent
+                        : Colors.grey,
+                  ),
+                  iconSize: 36,
+                  onPressed: () {
+                    setState(() => _dealRating = DealRating.positive);
+                    controller.rateDeal(DealRating.positive);
+                  },
+                ),
+                IconButton(
+                  icon: Icon(
+                    Icons.thumb_down,
+                    color: _dealRating == DealRating.negative
+                        ? AppColors.iconAccent
+                        : Colors.grey,
+                  ),
+                  iconSize: 36,
+                  onPressed: () {
+                    setState(() => _dealRating = DealRating.negative);
+                    controller.rateDeal(DealRating.negative);
+                  },
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
             ElevatedButton(
               onPressed: () {
                 controller.newGame();
                 _clearSelection();
+                setState(() => _dealRating = null);
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.dialogTitle,

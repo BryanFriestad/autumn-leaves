@@ -4,6 +4,11 @@ enum GameStatus {
   forfeited,
 }
 
+enum DealRating {
+  positive,
+  negative,
+}
+
 class GameMove {
   final int fromPileIndex;
   final int toPileIndex;
@@ -45,6 +50,7 @@ class GameRecord {
   final int moves;
   final List<GameMove> moveLog;
   final int scorePenalty;
+  final DealRating? dealRating;
 
   GameRecord({
     required this.id,
@@ -55,7 +61,22 @@ class GameRecord {
     required this.moves,
     required this.moveLog,
     this.scorePenalty = 0,
+    this.dealRating,
   });
+
+  GameRecord copyWith({DealRating? dealRating}) {
+    return GameRecord(
+      id: id,
+      shuffleId: shuffleId,
+      startTime: startTime,
+      endTime: endTime,
+      status: status,
+      moves: moves,
+      moveLog: moveLog,
+      scorePenalty: scorePenalty,
+      dealRating: dealRating ?? this.dealRating,
+    );
+  }
 
   Map<String, dynamic> toJson() {
     return {
@@ -67,6 +88,7 @@ class GameRecord {
       'm': moves,
       'ml': moveLog.map((m) => m.toJson()).toList(),
       'sp': scorePenalty,
+      'dr': dealRating?.index,
     };
   }
 
@@ -82,6 +104,9 @@ class GameRecord {
           .map((m) => GameMove.fromJson(m as Map<String, dynamic>))
           .toList(),
       scorePenalty: json['sp'] as int? ?? 0,
+      dealRating: json['dr'] != null
+          ? DealRating.values[json['dr'] as int]
+          : null,
     );
   }
 }

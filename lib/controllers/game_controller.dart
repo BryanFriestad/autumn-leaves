@@ -15,6 +15,7 @@ class GameController extends ChangeNotifier {
   bool _isInitialized = false;
   bool _showMoveHints = true;
   int _scorePenalty = 0;
+  String? _lastCompletedGameId;
 
   GameState get state => _state;
   bool get isOfflineMode => _isOfflineMode;
@@ -42,6 +43,7 @@ class GameController extends ChangeNotifier {
     _state = GameState.fromShuffleId(_currentShuffleId);
     _moveLog = [];
     _scorePenalty = 0;
+    _lastCompletedGameId = null;
     await _storage.clearInProgressGame();
     _hasInProgressGame = false;
     notifyListeners();
@@ -63,10 +65,14 @@ class GameController extends ChangeNotifier {
     }
   }
 
-  void testWinGame() {
+  Future<void> testWinGame() async {
     _currentShuffleId = 'test';
     _state = GameState.testWin();
     _moveLog = [];
+    _scorePenalty = 0;
+    _lastCompletedGameId = null;
+    await _storage.clearInProgressGame();
+    _hasInProgressGame = false;
     notifyListeners();
   }
 
@@ -133,8 +139,10 @@ class GameController extends ChangeNotifier {
   }
 
   Future<void> completeGame() async {
+    final id = DateTime.now().millisecondsSinceEpoch.toString();
+    _lastCompletedGameId = id;
     final record = GameRecord(
-      id: DateTime.now().millisecondsSinceEpoch.toString(),
+      id: id,
       shuffleId: _currentShuffleId,
       startTime: DateTime.now(),
       endTime: DateTime.now(),
@@ -147,6 +155,12 @@ class GameController extends ChangeNotifier {
     await _storage.clearInProgressGame();
     _hasInProgressGame = false;
     notifyListeners();
+  }
+
+  Future<void> rateDeal(DealRating rating) async {
+    final id = _lastCompletedGameId;
+    if (id == null) return;
+    await _storage.updateDealRating(id, rating);
   }
 
   void setOfflineMode(bool isOffline) {

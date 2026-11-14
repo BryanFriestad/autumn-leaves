@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -19,46 +20,45 @@ class LandingScreen extends StatelessWidget {
           if (!controller.isInitialized) {
             return const Center(
               child: CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(AppColors.progressIndicator),
+                valueColor: AlwaysStoppedAnimation<Color>(
+                  AppColors.progressIndicator,
+                ),
               ),
             );
           }
 
           return Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Text(
-                  'Autumn Leaves',
-                  style: AppTextStyles.landingTitle,
-                ),
-                const SizedBox(height: 16),
-                const Text(
-                  'Solitaire',
-                  style: AppTextStyles.landingSubtitle,
-                ),
-                const SizedBox(height: 64),
-                if (controller.hasInProgressGame)
-                  _buildButton(
-                    context,
-                    'Resume Game',
-                    Icons.refresh,
-                    () async {
-                      await controller.loadInProgressGame();
-                      if (context.mounted) {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => const GameScreen()),
-                        );
-                      }
-                    },
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Text(
+                    'Autumn Leaves',
+                    style: AppTextStyles.landingTitle,
                   ),
-                if (controller.hasInProgressGame) const SizedBox(height: 16),
-                _buildButton(
-                  context,
-                  'New Game',
-                  Icons.play_arrow,
-                  () async {
+                  const SizedBox(height: 16),
+                  const Text('Solitaire', style: AppTextStyles.landingSubtitle),
+                  const SizedBox(height: 64),
+                  if (controller.hasInProgressGame)
+                    _buildButton(
+                      context,
+                      'Resume Game',
+                      Icons.refresh,
+                      () async {
+                        await controller.loadInProgressGame();
+                        if (context.mounted) {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const GameScreen(),
+                            ),
+                          );
+                        }
+                      },
+                    ),
+                  if (controller.hasInProgressGame) const SizedBox(height: 16),
+                  _buildButton(context, 'New Game', Icons.play_arrow, () async {
                     if (controller.hasInProgressGame) {
                       final confirmed = await _showNewGameDialog(context);
                       if (confirmed != true || !context.mounted) return;
@@ -68,45 +68,60 @@ class LandingScreen extends StatelessWidget {
                     if (context.mounted) {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => const GameScreen()),
+                        MaterialPageRoute(
+                          builder: (context) => const GameScreen(),
+                        ),
                       );
                     }
-                  },
-                ),
-                const SizedBox(height: 16),
-                _buildButton(
-                  context,
-                  'Stats',
-                  Icons.bar_chart,
-                  () {
+                  }),
+                  const SizedBox(height: 16),
+                  _buildButton(context, 'Stats', Icons.bar_chart, () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => const StatsScreen()),
+                      MaterialPageRoute(
+                        builder: (context) => const StatsScreen(),
+                      ),
                     );
-                  },
-                ),
-                const SizedBox(height: 16),
-                _buildButton(
-                  context,
-                  'How to Play',
-                  Icons.help_outline,
-                  () {
+                  }),
+                  const SizedBox(height: 16),
+                  _buildButton(context, 'How to Play', Icons.help_outline, () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => const HowToPlayScreen()),
+                      MaterialPageRoute(
+                        builder: (context) => const HowToPlayScreen(),
+                      ),
                     );
-                  },
-                ),
-                const SizedBox(height: 16),
-                _buildButton(
-                  context,
-                  'Exit',
-                  Icons.exit_to_app,
-                  () {
+                  }),
+                  const SizedBox(height: 16),
+                  _buildButton(context, 'Exit', Icons.exit_to_app, () {
                     SystemNavigator.pop();
-                  },
-                ),
-              ],
+                  }),
+                  if (kDebugMode) ...[
+                    const SizedBox(height: 16),
+                    _buildButton(
+                      context,
+                      'Test Win Game',
+                      Icons.emoji_events,
+                      () async {
+                        if (controller.hasInProgressGame) {
+                          final confirmed = await _showNewGameDialog(context);
+                          if (confirmed != true || !context.mounted) return;
+                          await controller.forfeitGame();
+                        }
+                        await controller.testWinGame();
+                        if (context.mounted) {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const GameScreen(),
+                            ),
+                          );
+                        }
+                      },
+                    ),
+                  ],
+                ],
+              ),
             ),
           );
         },
@@ -119,10 +134,7 @@ class LandingScreen extends StatelessWidget {
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: AppColors.cardBackground,
-        title: const Text(
-          'Forfeit Game?',
-          style: AppTextStyles.dialogTitle,
-        ),
+        title: const Text('Forfeit Game?', style: AppTextStyles.dialogTitle),
         content: const Text(
           'You have an in-progress game. Starting a new game will forfeit it. Continue?',
           style: AppTextStyles.dialogContent,
@@ -130,10 +142,7 @@ class LandingScreen extends StatelessWidget {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text(
-              'Cancel',
-              style: AppTextStyles.dialogButton,
-            ),
+            child: const Text('Cancel', style: AppTextStyles.dialogButton),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
@@ -171,10 +180,7 @@ class LandingScreen extends StatelessWidget {
           children: [
             Icon(icon, size: 24),
             const SizedBox(width: 12),
-            Text(
-              label,
-              style: AppTextStyles.buttonText,
-            ),
+            Text(label, style: AppTextStyles.buttonText),
           ],
         ),
       ),
