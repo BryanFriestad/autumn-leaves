@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -6,6 +5,7 @@ import '../controllers/game_controller.dart';
 import 'game_screen.dart';
 import 'stats_screen.dart';
 import 'how_to_play_screen.dart';
+import 'options_screen.dart';
 import '../theme/app_theme.dart';
 
 class LandingScreen extends StatelessWidget {
@@ -93,33 +93,18 @@ class LandingScreen extends StatelessWidget {
                     );
                   }),
                   const SizedBox(height: 16),
+                  _buildButton(context, 'Options', Icons.settings, () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const OptionsScreen(),
+                      ),
+                    );
+                  }),
+                  const SizedBox(height: 16),
                   _buildButton(context, 'Exit', Icons.exit_to_app, () {
                     SystemNavigator.pop();
                   }),
-                  if (kDebugMode) ...[
-                    const SizedBox(height: 16),
-                    _buildButton(
-                      context,
-                      'Test Win Game',
-                      Icons.emoji_events,
-                      () async {
-                        if (controller.hasInProgressGame) {
-                          final confirmed = await _showNewGameDialog(context);
-                          if (confirmed != true || !context.mounted) return;
-                          await controller.forfeitGame();
-                        }
-                        await controller.testWinGame();
-                        if (context.mounted) {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const GameScreen(),
-                            ),
-                          );
-                        }
-                      },
-                    ),
-                  ],
                 ],
               ),
             ),

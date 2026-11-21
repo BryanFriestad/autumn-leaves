@@ -23,10 +23,7 @@ class _GameScreenState extends State<GameScreen> {
     return Scaffold(
       backgroundColor: AppColors.scaffoldBackground,
       appBar: AppBar(
-        title: const Text(
-          'Autumn Leaves',
-          style: AppTextStyles.appBarTitle,
-        ),
+        title: const Text('Autumn Leaves', style: AppTextStyles.appBarTitle),
         backgroundColor: AppColors.appBarBackground,
         iconTheme: AppIconThemes.appBar,
         leading: IconButton(
@@ -43,14 +40,6 @@ class _GameScreenState extends State<GameScreen> {
           },
         ),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.lightbulb),
-            color: AppColors.iconAccent,
-            onPressed: () {
-              context.read<GameController>().toggleMoveHints();
-            },
-            tooltip: 'Toggle Hints',
-          ),
           IconButton(
             icon: const Icon(Icons.flag),
             color: AppColors.iconAccent,
@@ -74,9 +63,7 @@ class _GameScreenState extends State<GameScreen> {
           return Column(
             children: [
               _buildTopBar(controller),
-              Expanded(
-                child: _buildGameBoard(controller),
-              ),
+              Expanded(child: _buildGameBoard(controller)),
               _buildBottomBar(controller),
             ],
           );
@@ -115,9 +102,11 @@ class _GameScreenState extends State<GameScreen> {
         final screenWidth = constraints.maxWidth;
         final totalPadding = 16; // 8px horizontal padding on each side
         final columnSpacing = 4; // 2px on each side of each column
-        final availableWidth = screenWidth - totalPadding - (columnSpacing * 12);
+        final availableWidth =
+            screenWidth - totalPadding - (columnSpacing * 12);
         final columnWidth = (availableWidth / 6).clamp(40.0, 80.0);
-        final cardWidth = columnWidth - 4; // Account for 2px padding on each side
+        final cardWidth =
+            columnWidth - 4; // Account for 2px padding on each side
         final cardHeight = cardWidth * 1.5;
         final cardSpacing = cardHeight * 0.3;
 
@@ -145,9 +134,12 @@ class _GameScreenState extends State<GameScreen> {
                           cardWidth: cardWidth,
                           cardHeight: cardHeight,
                           cardSpacing: cardSpacing,
-                          selectedIndex: selectedPileIndex == index ? selectedCardIndex : null,
+                          selectedIndex: selectedPileIndex == index
+                              ? selectedCardIndex
+                              : null,
                           dimmedCardIndices: dimmedCards[index],
-                          onCardTap: (cardIndex) => _handleCardTap(controller, index, cardIndex),
+                          onCardTap: (cardIndex) =>
+                              _handleCardTap(controller, index, cardIndex),
                         ),
                       ),
                     ),
@@ -193,12 +185,16 @@ class _GameScreenState extends State<GameScreen> {
           final card = pile.cards[j];
           if (!card.faceUp) continue;
 
-          if (i == selectedPileIndex && GameRules.isValidRun(pile.cards.sublist(j))) {
+          if (i == selectedPileIndex &&
+              GameRules.isValidRun(pile.cards.sublist(j))) {
             continue;
-          } else if (controller.getValidDestinations(selectedPileIndex!, selectedCardIndex!).contains(i) && GameRules.isValidRun(pile.cards.sublist(j))) {
+          } else if (controller
+                  .getValidDestinations(selectedPileIndex!, selectedCardIndex!)
+                  .contains(i) &&
+              GameRules.isValidRun(pile.cards.sublist(j))) {
             continue;
           }
-          
+
           // All other cards are dimmed
           dimmedCards[i]!.add(j);
         }
@@ -225,10 +221,7 @@ class _GameScreenState extends State<GameScreen> {
             style: ElevatedButton.styleFrom(
               backgroundColor: AppColors.buttonBackground,
               foregroundColor: AppColors.buttonForeground,
-              padding: const EdgeInsets.symmetric(
-                horizontal: 20,
-                vertical: 10,
-              ),
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
             ),
             child: const Text(
               'Undo',
@@ -245,10 +238,7 @@ class _GameScreenState extends State<GameScreen> {
             style: ElevatedButton.styleFrom(
               backgroundColor: AppColors.buttonBackground,
               foregroundColor: AppColors.buttonForeground,
-              padding: const EdgeInsets.symmetric(
-                horizontal: 20,
-                vertical: 10,
-              ),
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
             ),
             child: const Text(
               'Deal Cards',
@@ -286,10 +276,7 @@ class _GameScreenState extends State<GameScreen> {
               style: const TextStyle(fontSize: 24),
             ),
             const SizedBox(height: 24),
-            const Text(
-              'Rate this deal',
-              style: TextStyle(fontSize: 18),
-            ),
+            const Text('Rate this deal', style: TextStyle(fontSize: 18)),
             const SizedBox(height: 8),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -337,10 +324,7 @@ class _GameScreenState extends State<GameScreen> {
                   vertical: 16,
                 ),
               ),
-              child: const Text(
-                'New Game',
-                style: TextStyle(fontSize: 18),
-              ),
+              child: const Text('New Game', style: TextStyle(fontSize: 18)),
             ),
           ],
         ),
