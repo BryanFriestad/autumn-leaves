@@ -17,6 +17,7 @@ class GameController extends ChangeNotifier {
   int _scorePenalty = 0;
   String? _lastCompletedGameId;
   bool _isTestGame = false;
+  DealType _dealType = DealType.random;
 
   GameState get state => _state;
   bool get isOfflineMode => _isOfflineMode;
@@ -46,6 +47,7 @@ class GameController extends ChangeNotifier {
     _scorePenalty = 0;
     _lastCompletedGameId = null;
     _isTestGame = false;
+    _dealType = DealType.random;
     await _storage.clearInProgressGame();
     _hasInProgressGame = false;
     notifyListeners();
@@ -65,6 +67,7 @@ class GameController extends ChangeNotifier {
       _moveLog = data['moveLog'] as List<GameMove>;
       _scorePenalty = data['scorePenalty'] as int? ?? 0;
       _isTestGame = false;
+      _dealType = DealType.random;
       _lastCompletedGameId = null;
       notifyListeners();
     } catch (_) {
@@ -80,6 +83,7 @@ class GameController extends ChangeNotifier {
     _scorePenalty = 0;
     _lastCompletedGameId = null;
     _isTestGame = true;
+    _dealType = DealType.test;
     await _storage.clearInProgressGame();
     _hasInProgressGame = false;
     notifyListeners();
@@ -88,12 +92,14 @@ class GameController extends ChangeNotifier {
   void dealCards() async {
     if (_state.canDeal()) {
       _state = _state.deal();
-      _moveLog.add(GameMove(
-        fromPileIndex: -1,
-        toPileIndex: -1,
-        cardCount: 6,
-        type: 'deal',
-      ));
+      _moveLog.add(
+        GameMove(
+          fromPileIndex: -1,
+          toPileIndex: -1,
+          cardCount: 6,
+          type: 'deal',
+        ),
+      );
       notifyListeners();
       await _saveInProgress();
     }
@@ -103,27 +109,36 @@ class GameController extends ChangeNotifier {
     final newState = GameRules.moveCard(_state, fromPileIndex, toPileIndex);
     if (newState != _state) {
       _state = newState;
-      _moveLog.add(GameMove(
-        fromPileIndex: fromPileIndex,
-        toPileIndex: toPileIndex,
-        cardCount: 1,
-        type: 'moveCard',
-      ));
+      _moveLog.add(
+        GameMove(
+          fromPileIndex: fromPileIndex,
+          toPileIndex: toPileIndex,
+          cardCount: 1,
+          type: 'moveCard',
+        ),
+      );
       notifyListeners();
       await _saveInProgress();
     }
   }
 
   void moveCards(int fromPileIndex, int toPileIndex, int cardCount) async {
-    final newState = GameRules.moveCards(_state, fromPileIndex, toPileIndex, cardCount);
+    final newState = GameRules.moveCards(
+      _state,
+      fromPileIndex,
+      toPileIndex,
+      cardCount,
+    );
     if (newState != _state) {
       _state = newState;
-      _moveLog.add(GameMove(
-        fromPileIndex: fromPileIndex,
-        toPileIndex: toPileIndex,
-        cardCount: cardCount,
-        type: 'moveCards',
-      ));
+      _moveLog.add(
+        GameMove(
+          fromPileIndex: fromPileIndex,
+          toPileIndex: toPileIndex,
+          cardCount: cardCount,
+          type: 'moveCards',
+        ),
+      );
       notifyListeners();
       await _saveInProgress();
     }
@@ -140,6 +155,7 @@ class GameController extends ChangeNotifier {
       moves: _state.moves,
       moveLog: List.from(_moveLog),
       scorePenalty: _scorePenalty,
+      dealType: _dealType,
     );
     await _storage.saveToHistory(record);
     await _storage.clearInProgressGame();
@@ -159,6 +175,7 @@ class GameController extends ChangeNotifier {
       moves: _state.moves,
       moveLog: List.from(_moveLog),
       scorePenalty: _scorePenalty,
+      dealType: _dealType,
     );
     await _storage.saveToHistory(record);
     await _storage.clearInProgressGame();
@@ -196,13 +213,19 @@ class GameController extends ChangeNotifier {
     _moveLog = [];
     _scorePenalty = 0;
     _isTestGame = false;
+    _dealType = DealType.random;
     notifyListeners();
   }
 
   Future<void> _saveInProgress() async {
     if (_isTestGame) return;
     if (!_state.isWon) {
-      await _storage.saveInProgressGame(_state, _moveLog, _currentShuffleId, scorePenalty: _scorePenalty);
+      await _storage.saveInProgressGame(
+        _state,
+        _moveLog,
+        _currentShuffleId,
+        scorePenalty: _scorePenalty,
+      );
       _hasInProgressGame = true;
     } else {
       await completeGame();
@@ -215,8 +238,16 @@ class GameController extends ChangeNotifier {
   }
 
   bool canMoveCard(int pileIndex, int cardIndex) {
-    return GameRules.getMovableCards(_state.piles[pileIndex], _state.piles).isNotEmpty &&
-           cardIndex >= _state.piles[pileIndex].cards.length - GameRules.getMovableCards(_state.piles[pileIndex], _state.piles).length;
+    return GameRules.getMovableCards(
+          _state.piles[pileIndex],
+          _state.piles,
+        ).isNotEmpty &&
+        cardIndex >=
+            _state.piles[pileIndex].cards.length -
+                GameRules.getMovableCards(
+                  _state.piles[pileIndex],
+                  _state.piles,
+                ).length;
   }
 
   List<int> getValidDestinations(int fromPileIndex, int cardIndex) {

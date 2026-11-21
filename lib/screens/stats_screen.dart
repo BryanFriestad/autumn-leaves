@@ -269,6 +269,7 @@ class _StatsScreenState extends State<StatsScreen> {
               _buildDetailRow('Single-card moves', singleMoves.toString()),
               _buildDetailRow('Multi-card moves', multiMoves.toString()),
               _buildDetailRow('Deal rating', _formatRating(game.dealRating)),
+              _buildDetailRow('Deal type', _formatDealType(game.dealType)),
               _buildDetailRow('Shuffle ID', game.shuffleId),
             ],
           ),
@@ -311,6 +312,15 @@ class _StatsScreenState extends State<StatsScreen> {
         return 'Thumbs down';
       case null:
         return 'Not rated';
+    }
+  }
+
+  String _formatDealType(DealType type) {
+    switch (type) {
+      case DealType.random:
+        return 'Random';
+      case DealType.test:
+        return 'Test';
     }
   }
 

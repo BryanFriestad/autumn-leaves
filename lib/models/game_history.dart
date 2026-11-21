@@ -1,13 +1,8 @@
-enum GameStatus {
-  inProgress,
-  won,
-  forfeited,
-}
+enum GameStatus { inProgress, won, forfeited }
 
-enum DealRating {
-  positive,
-  negative,
-}
+enum DealRating { positive, negative }
+
+enum DealType { random, test }
 
 class GameMove {
   final int fromPileIndex;
@@ -23,12 +18,7 @@ class GameMove {
   });
 
   Map<String, dynamic> toJson() {
-    return {
-      'f': fromPileIndex,
-      't': toPileIndex,
-      'c': cardCount,
-      'ty': type,
-    };
+    return {'f': fromPileIndex, 't': toPileIndex, 'c': cardCount, 'ty': type};
   }
 
   factory GameMove.fromJson(Map<String, dynamic> json) {
@@ -51,6 +41,7 @@ class GameRecord {
   final List<GameMove> moveLog;
   final int scorePenalty;
   final DealRating? dealRating;
+  final DealType dealType;
 
   GameRecord({
     required this.id,
@@ -62,9 +53,10 @@ class GameRecord {
     required this.moveLog,
     this.scorePenalty = 0,
     this.dealRating,
+    this.dealType = DealType.random,
   });
 
-  GameRecord copyWith({DealRating? dealRating}) {
+  GameRecord copyWith({DealRating? dealRating, DealType? dealType}) {
     return GameRecord(
       id: id,
       shuffleId: shuffleId,
@@ -75,6 +67,7 @@ class GameRecord {
       moveLog: moveLog,
       scorePenalty: scorePenalty,
       dealRating: dealRating ?? this.dealRating,
+      dealType: dealType ?? this.dealType,
     );
   }
 
@@ -89,6 +82,7 @@ class GameRecord {
       'ml': moveLog.map((m) => m.toJson()).toList(),
       'sp': scorePenalty,
       'dr': dealRating?.index,
+      'dt': dealType.index,
     };
   }
 
@@ -107,6 +101,9 @@ class GameRecord {
       dealRating: json['dr'] != null
           ? DealRating.values[json['dr'] as int]
           : null,
+      dealType: json['dt'] != null
+          ? DealType.values[json['dt'] as int]
+          : DealType.random,
     );
   }
 }
