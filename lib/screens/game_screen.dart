@@ -100,13 +100,11 @@ class _GameScreenState extends State<GameScreen> {
     return LayoutBuilder(
       builder: (context, constraints) {
         final screenWidth = constraints.maxWidth;
-        final totalPadding = 16; // 8px horizontal padding on each side
-        final columnSpacing = 4; // 2px on each side of each column
-        final availableWidth =
-            screenWidth - totalPadding - (columnSpacing * 12);
-        final columnWidth = (availableWidth / 6).clamp(40.0, 80.0);
-        final cardWidth =
-            columnWidth - 4; // Account for 2px padding on each side
+        const double boardInset = 12.0;
+        final columnSpacing = 12;
+        final boardWidth = screenWidth - boardInset * 2;
+        final columnWidth = boardWidth / 6;
+        final cardWidth = (boardWidth - columnSpacing * 5) / 6;
         final cardHeight = cardWidth * 1.5;
         final cardSpacing = cardHeight * 0.3;
 
@@ -117,7 +115,7 @@ class _GameScreenState extends State<GameScreen> {
           child: SizedBox(
             height: 500,
             child: Padding(
-              padding: const EdgeInsets.all(8),
+              padding: const EdgeInsets.all(boardInset),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: controller.state.piles.asMap().entries.map((entry) {
@@ -138,6 +136,7 @@ class _GameScreenState extends State<GameScreen> {
                               ? selectedCardIndex
                               : null,
                           dimmedCardIndices: dimmedCards[index],
+                          naturalPlacement: controller.naturalPlacement,
                           onCardTap: (cardIndex) =>
                               _handleCardTap(controller, index, cardIndex),
                         ),

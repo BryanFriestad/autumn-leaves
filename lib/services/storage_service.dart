@@ -9,6 +9,7 @@ import '../logic/game_rules.dart';
 class StorageService {
   static const String _inProgressKey = 'in_progress_game';
   static const String _historyKey = 'game_history';
+  static const String _naturalPlacementKey = 'natural_placement';
 
   Future<void> saveInProgressGame(GameState state, List<GameMove> moveLog, String shuffleId, {int scorePenalty = 0}) async {
     final prefs = await SharedPreferences.getInstance();
@@ -53,6 +54,16 @@ class StorageService {
   Future<bool> hasInProgressGame() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.containsKey(_inProgressKey);
+  }
+
+  Future<bool> getNaturalPlacement() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getBool(_naturalPlacementKey) ?? false;
+  }
+
+  Future<void> setNaturalPlacement(bool value) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_naturalPlacementKey, value);
   }
 
   Future<void> saveToHistory(GameRecord record) async {

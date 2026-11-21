@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/pile.dart';
+import '../logic/natural_placement.dart';
 import 'card_widget.dart' as card_widget;
 import '../theme/app_theme.dart';
 
@@ -11,6 +12,7 @@ class PileWidget extends StatelessWidget {
   final int? selectedIndex;
   final Function(int)? onCardTap;
   final Set<int>? dimmedCardIndices;
+  final bool naturalPlacement;
 
   const PileWidget({
     super.key,
@@ -20,7 +22,8 @@ class PileWidget extends StatelessWidget {
     this.cardSpacing = 20,
     this.selectedIndex,
     this.onCardTap,
-    this.dimmedCardIndices
+    this.dimmedCardIndices,
+    this.naturalPlacement = false,
   });
 
   @override
@@ -33,27 +36,52 @@ class PileWidget extends StatelessWidget {
       width: cardWidth,
       height: cardHeight + (pile.cards.length - 1) * cardSpacing,
       child: Stack(
-        children: pile.cards.asMap().entries.map((entry) {
-          final index = entry.key;
-          final card = entry.value;
-          final topOffset = index * cardSpacing;
-
-          return Positioned(
-            top: topOffset,
-            child: card_widget.CardWidget(
-              card: card,
-              width: cardWidth,
-              height: cardHeight,
-              isSelected: selectedIndex == index,
-              isDimmed: dimmedCardIndices?.contains(index) ?? false,
-              onTap: card.faceUp && onCardTap != null
-                  ? () => onCardTap!(index)
-                  : null,
-            ),
-          );
-        }).toList(),
+        // Jittered cards may paint slightly outside the pile bounds.
+        clipBehavior: naturalPlacement ? Clip.none : Clip.hardEdge,
+        children: _buildCards(cardWidth, cardHeight, cardSpacing),
       ),
     );
+  }
+
+  List<Widget> _buildCards(double cardWidth, double cardHeight, double cardSpacing) {
+    final children = <Widget>[];
+    var previousDy = 0.0;
+
+    for (var index = 0; index < pile.cards.length; index++) {
+      final card = pile.cards[index];
+      final topOffset = index * cardSpacing;
+
+      Widget cardWidget = card_widget.CardWidget(
+        card: card,
+        width: cardWidth,
+        height: cardHeight,
+        isSelected: selectedIndex == index,
+        isDimmed: dimmedCardIndices?.contains(index) ?? false,
+        onTap: card.faceUp && onCardTap != null ? () => onCardTap!(index) : null,
+      );
+
+      if (naturalPlacement) {
+        final placement = NaturalPlacement.forCard(
+          card,
+          cardWidth: cardWidth,
+          cardSpacing: cardSpacing,
+          previousDy: previousDy,
+        );
+        previousDy = placement.dy;
+        cardWidget = Transform.translate(
+          offset: Offset(placement.dx, placement.dy),
+          child: Transform.rotate(
+            angle: placement.rotation,
+            alignment: Alignment.center,
+            child: cardWidget,
+          ),
+        );
+      }
+
+      children.add(Positioned(top: topOffset, child: cardWidget));
+    }
+
+    return children;
   }
 
   Widget _buildEmptyPile() {

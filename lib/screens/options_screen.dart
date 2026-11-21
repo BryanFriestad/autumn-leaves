@@ -38,6 +38,22 @@ class OptionsScreen extends StatelessWidget {
                   activeThumbColor: AppColors.buttonBackground,
                 ),
               ),
+              Card(
+                color: AppColors.cardBackground,
+                child: SwitchListTile(
+                  title: const Text(
+                    'Natural Placement',
+                    style: TextStyle(color: AppColors.primaryText),
+                  ),
+                  subtitle: const Text(
+                    'Slightly offset and rotate cards in piles',
+                    style: TextStyle(color: AppColors.secondaryText),
+                  ),
+                  value: controller.naturalPlacement,
+                  onChanged: (_) => controller.toggleNaturalPlacement(),
+                  activeThumbColor: AppColors.buttonBackground,
+                ),
+              ),
               if (kDebugMode) ...[
                 const SizedBox(height: 16),
                 SizedBox(

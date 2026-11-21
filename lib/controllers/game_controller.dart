@@ -18,6 +18,7 @@ class GameController extends ChangeNotifier {
   String? _lastCompletedGameId;
   bool _isTestGame = false;
   DealType _dealType = DealType.random;
+  bool _naturalPlacement = false;
 
   GameState get state => _state;
   bool get isOfflineMode => _isOfflineMode;
@@ -27,6 +28,7 @@ class GameController extends ChangeNotifier {
   bool get isInitialized => _isInitialized;
   bool get showMoveHints => _showMoveHints;
   int get totalScore => _state.score - _scorePenalty;
+  bool get naturalPlacement => _naturalPlacement;
 
   GameController() {
     _currentShuffleId = getRandomShuffleId().toString();
@@ -36,6 +38,7 @@ class GameController extends ChangeNotifier {
 
   Future<void> _initialize() async {
     _hasInProgressGame = await _storage.hasInProgressGame();
+    _naturalPlacement = await _storage.getNaturalPlacement();
     _isInitialized = true;
     notifyListeners();
   }
@@ -235,6 +238,12 @@ class GameController extends ChangeNotifier {
   void toggleMoveHints() {
     _showMoveHints = !_showMoveHints;
     notifyListeners();
+  }
+
+  void toggleNaturalPlacement() {
+    _naturalPlacement = !_naturalPlacement;
+    notifyListeners();
+    _storage.setNaturalPlacement(_naturalPlacement);
   }
 
   bool canMoveCard(int pileIndex, int cardIndex) {
