@@ -75,7 +75,7 @@ class LandingScreen extends StatelessWidget {
                     }
                   }),
                   const SizedBox(height: 16),
-                  _buildButton(context, 'Stats', Icons.bar_chart, () {
+                  _buildButton(context, 'Game Log', Icons.history, () {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
